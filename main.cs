@@ -26,6 +26,7 @@ SOFTWARE.
 */
 
 using AForge.Controls;
+using AForge.Video;
 using AForge.Video.DirectShow;
 using System;
 using System.Drawing;
@@ -183,6 +184,16 @@ class ParentForm : Form
 		stopButton.Click += new System.EventHandler(this.stopButton_Click);
 		Controls.Add(stopButton);
 
+		//
+		// horizontal flip yes/no (yes is default)
+		//
+		flipHCheckBox = new CheckBox();
+		flipHCheckBox.Location = new System.Drawing.Point(10, 110);
+		flipHCheckBox.Text = "Flip horizontal";
+		flipHCheckBox.Checked = true;
+		Controls.Add(flipHCheckBox);
+
+
 		// 
 		// videoSourcePlayer1
 		// 
@@ -234,6 +245,13 @@ class ParentForm : Form
 	}
 
 
+	private void videoSource1_NewFrame(object sender, NewFrameEventArgs eventArgs)
+	{
+		//eventArgs.Frame.RotateFlip(RotateFlipType.Rotate180FlipNone);
+		eventArgs.Frame.RotateFlip(RotateFlipType.RotateNoneFlipX);
+	}
+
+
 	// On form closing
 	private void MyForm_FormClosing(object sender, FormClosingEventArgs e)
 	{
@@ -265,7 +283,14 @@ class ParentForm : Form
 	{
 		//int resolutionIndex = 0;
 		// create first video source
-		VideoCaptureDevice videoSource1 = new VideoCaptureDevice(videoDevices[camera1Combo.SelectedIndex].MonikerString);
+		videoSource1 = new VideoCaptureDevice(videoDevices[camera1Combo.SelectedIndex].MonikerString);
+		
+		//should the webcam feed be flipped?
+		if (flipHCheckBox.Checked) { 
+			//eventhandler to flip the picture
+			videoSource1.NewFrame += new NewFrameEventHandler(videoSource1_NewFrame);
+		}
+
 		if (videoSource1.VideoCapabilities.Length > 0) {
 			videoSource1.VideoResolution = videoSource1.VideoCapabilities[0]; //It selects the default size
 
@@ -300,14 +325,16 @@ class ParentForm : Form
 		stopButton_Click(this, null);
 	}
 
-	private AlphaForm alphaForm;	// our test form
+	private AlphaForm alphaForm;	// form to display videofeed with alpha transparency
 	private Bitmap sourceBitmap; // bitmap froum video source player
 	private VideoSourcePlayer videoSourcePlayer1; // Video Source Player
+	private VideoCaptureDevice videoSource1; // selected video source
 	private int alphaFormWidth;
 	private int alphaFormHeight;
-	private System.Windows.Forms.ComboBox camera1Combo; // Combobox for source webcam
-	private System.Windows.Forms.Button startButton;
-	private System.Windows.Forms.Button stopButton;
+	private ComboBox camera1Combo; // Combobox for source webcam
+	private Button startButton;
+	private Button stopButton;
+	private CheckBox flipHCheckBox; // flip horizontal yes/no
 	FilterInfoCollection videoDevices; // list of video devices
 
 	public delegate void QuitProgramDelegate();
