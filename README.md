@@ -7,7 +7,11 @@ It stays ontop of any other window or your desktop.
 ## Usage:
 1) Start the program
 2) Select your webcam & hit start
+![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen1_startscreen.png "Initial Screen")
 3) Wait for the cam to appear and drag your webcam free on top of your windows
+![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen3_xsplit.png "XSplit VCam Example")
+![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen2_chromacam.png "personify chromacam")
+![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen4_without_greenscreen.png "Just the webcam without greenscreen removal :)")
 
 ## Special virtual background feature: 
 If you have the tool XSplit VCam, you can also leverage from the alpha channel support. 
