@@ -1,5 +1,5 @@
 # vCamDesk
-Webcam on Desktop with support for 3rd-Party virtual background removal
+Webcam on Desktop with support for 3rd-Party virtual background removal (= no greenscreen required)
 
 vCamDesk brings your webcam on your desktop as a free floating small window. 
 It stays always on top of any other window or your desktop.
@@ -23,7 +23,7 @@ result even takes lesser space on your screen / demo / recordings. :)
 
 If you want to leverage background removal with XSplit vCam, you can support me (at no additional cost for you) by using this affiliate link: https://link.xsolla.com/uLZFgSKG
 
-Hint: you should add a grey background, which I find best fit for all kind of demos and presentations.
+Hint: you should add a grey background, which I find fits best for all kind of demos and presentations.
 
 ### Background removal with personify chromacam Example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen2_chromacam.png "personify chromacam Example")
@@ -38,12 +38,16 @@ It also provides a free placable chromacam on your desktop too with additional f
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen4_without_greenscreen.png "Just the webcam without greenscreen removal :)")
 
 
-## Building
+## Building & Dependencies
 Note: If you want to build this, make sure to get the latest AForge.NET C# Libraries at
 http://aforgenet.com/framework/
 
+## Thanks!
+I would not have figured it out to get this alphachannel thing working in c# without the excellent demo by Rui Godinho Lopes, so many thanks to him for his PerPixelAlphaForm example.
+And thanks to all the people working on AForge.net-Libraries to provide nice usable DirectShow-Support to c#-newbies. 
+
 ## Thoughts
-I wrote this program because a lot of tools have kind of silly webcam display 
+I wrote this program because a lot of tools have some kind of silly webcam display 
 if I make demos and screenrecordings. Though I am a big fan of OBS Studio
 it is sometimes overkill and sometimes I don't notice when my webcam is on top
 of content from my screen. To avoid this, a free movable webcam window was
