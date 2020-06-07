@@ -38,9 +38,13 @@ It also provides a free placable chromacam on your desktop too with additional f
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen4_without_greenscreen.png "Just the webcam without greenscreen removal :)")
 
 
-## Building
+## Building & Dependencies
 Note: If you want to build this, make sure to get the latest AForge.NET C# Libraries at
 http://aforgenet.com/framework/
+
+## Thanks!
+I would not have figured it out to get this alphachannel thing working in c# without the excellent demo by Rui Godinho Lopes, so many thanks to him for his PerPixelAlphaForm example.
+And thanks to all the people working on AForge.net-Libraries to provide nice usable DirectShow-Support to c#-newbies. 
 
 ## Thoughts
 I wrote this program because a lot of tools have kind of silly webcam display 
