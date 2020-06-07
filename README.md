@@ -8,6 +8,9 @@ It also supports chromakey (alphachannel), so webcam tools like XSplit vCam or p
 which provide virtual background removal without greenscreen are supported and the
 result even takes lesser space on your screen / demo / recordings. :)
 
+## Download
+You find the latest releases under https://github.com/tharmes42/vCamDesk/releases
+
 ## Usage:
 1) Start the program
 2) Select your webcam & hit start
