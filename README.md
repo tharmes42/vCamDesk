@@ -18,14 +18,14 @@ result even takes lesser space on your screen / demo / recordings. :)
 - Use left mouse button to drag and move
 - Use right mouse button to exit 
 
-### Background removal with XSplit VCam Example
+### Background removal with XSplit VCam example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen3_xsplit.png "XSplit VCam Example")
 
 If you want to leverage background removal with XSplit vCam, you can support me (at no additional cost for you) by using this affiliate link: https://link.xsolla.com/uLZFgSKG
 
 Hint: you should add a grey background, which I find fits best for all kind of demos and presentations.
 
-### Background removal with personify chromacam Example
+### Background removal with personify chromacam example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen2_chromacam.png "personify chromacam Example")
 
 You can find personify Chromacam here (which is a little more expensive than XSplit VCam):
@@ -34,11 +34,11 @@ If you want the all in one solution, you should have a look at Personify Present
 https://personifyinc.com/products/presenter
 It also provides a free placable chromacam on your desktop too with additional features.
 
-### Just the webcam source Example
+### Just the webcam source example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen4_without_greenscreen.png "Just the webcam without greenscreen removal :)")
 
 
-## Building & Dependencies
+## Building & dependencies
 Note: If you want to build this, make sure to get the latest AForge.NET C# Libraries at
 http://aforgenet.com/framework/
 
