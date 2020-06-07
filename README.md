@@ -11,8 +11,8 @@ It stays ontop of any other window or your desktop.
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen1_startscreen.png "Initial Screen")
 
 3) Wait for the cam to appear and drag your webcam free on top of your windows
-Use left mouse button to drag and move
-Use right mouse button to exit 
+- Use left mouse button to drag and move
+- Use right mouse button to exit 
 
 ### XSplit VCam Example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen3_xsplit.png "XSplit VCam Example")
