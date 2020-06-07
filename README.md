@@ -4,12 +4,12 @@ Webcam on Desktop with support for XSplit vCam and virtual background removal
 vCamDesk brings your webcam on your desktop as a free floating small window. 
 It stays ontop of any other window or your desktop.
 
-#Usage:
+# Usage:
 1) Start the program
 2) Select your webcam & hit start
 3) Wait for the cam to appear and drag your webcam free on top of your windows
 
-#Special virtual background feature: 
+# Special virtual background feature: 
 If you have the tool XSplit VCam, you can also leverage from the alpha channel support. 
 Meaning: you can use XSplit vCam to remove your background and your webcam
 output even takes lesser space on your screen / demo / recordings.
@@ -27,11 +27,11 @@ If you want the all in one solution, you should have a look at Personify Present
 https://personifyinc.com/products/presenter
 It provides a free placable chromacam on your desktop too with additional features.
 
-#Building
+# Building
 Note: If you want to build this, make sure to get the latest AForge.NET C# Libraries at
 http://aforgenet.com/framework/
 
-#Thoughts
+# Thoughts
 I wrote this program because a lot of tools have kind of silly webcam display 
 if I make demos and screenrecordings. Though I am a big fan of OBS Studio
 it is sometimes overkill and sometimes I don't notice when my webcam is on top
