@@ -249,6 +249,7 @@ class ParentForm : Form
 	{
 		//eventArgs.Frame.RotateFlip(RotateFlipType.Rotate180FlipNone);
 		eventArgs.Frame.RotateFlip(RotateFlipType.RotateNoneFlipX);
+
 	}
 
 
