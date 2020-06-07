@@ -18,7 +18,7 @@ result even takes lesser space on your screen / demo / recordings. :)
 - Use left mouse button to drag and move
 - Use right mouse button to exit 
 
-### Backgroun removal with XSplit VCam Example
+### Background removal with XSplit VCam Example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen3_xsplit.png "XSplit VCam Example")
 
 If you want to leverage background removal with XSplit vCam, you can support me (at no additional cost for you) by using this affiliate link: https://link.xsolla.com/uLZFgSKG
