@@ -1,5 +1,5 @@
 # vCamDesk
-Webcam on Desktop with support for 3rd-Party virtual background removal
+Webcam on Desktop with support for 3rd-Party virtual background removal (= no greenscreen required)
 
 vCamDesk brings your webcam on your desktop as a free floating small window. 
 It stays always on top of any other window or your desktop.
