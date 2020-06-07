@@ -266,19 +266,21 @@ class ParentForm : Form
 		//int resolutionIndex = 0;
 		// create first video source
 		VideoCaptureDevice videoSource1 = new VideoCaptureDevice(videoDevices[camera1Combo.SelectedIndex].MonikerString);
-		videoSource1.VideoResolution = videoSource1.VideoCapabilities[0]; //It selects the default size
+		if (videoSource1.VideoCapabilities.Length > 0) {
+			videoSource1.VideoResolution = videoSource1.VideoCapabilities[0]; //It selects the default size
 
-/*		for (int i = 0; i < videoSource1.VideoCapabilities.Length; i++)
-		{
-			string resolution = "Resolution Number " + Convert.ToString(i);
-			string resolution_size = videoSource1.VideoCapabilities[i].FrameSize.ToString();
-			Console.WriteLine("resolution , resolution_size>> " + resolution + "" + resolution_size);
+			/*		for (int i = 0; i < videoSource1.VideoCapabilities.Length; i++)
+					{
+						string resolution = "Resolution Number " + Convert.ToString(i);
+						string resolution_size = videoSource1.VideoCapabilities[i].FrameSize.ToString();
+						Console.WriteLine("resolution , resolution_size>> " + resolution + "" + resolution_size);
+					}
+					resolutionIndex = 6;
+					videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex];
+					float aspectRatio = (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Height / (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Width;
+					alphaFormHeight = (int)(alphaFormWidth * aspectRatio);
+			*/
 		}
-		resolutionIndex = 6;
-		videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex];
-		float aspectRatio = (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Height / (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Width;
-		alphaFormHeight = (int)(alphaFormWidth * aspectRatio);
-*/
 		videoSourcePlayer1.VideoSource = videoSource1;
 		videoSourcePlayer1.Start();
 	}
