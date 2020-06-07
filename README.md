@@ -1,8 +1,12 @@
 # vCamDesk
-Webcam on Desktop with support for XSplit vCam and virtual background removal
+Webcam on Desktop with support for 3rd-Party virtual background removal
 
 vCamDesk brings your webcam on your desktop as a free floating small window. 
-It stays ontop of any other window or your desktop.
+It stays always on top of any other window or your desktop.
+
+It also supports chromakey (alphachannel), so webcam tools like XSplit vCam or personify chromacam 
+which provide virtual background removal without greenscreen are supported and the
+result even takes lesser space on your screen / demo / recordings. :)
 
 ## Usage:
 1) Start the program
@@ -14,32 +18,25 @@ It stays ontop of any other window or your desktop.
 - Use left mouse button to drag and move
 - Use right mouse button to exit 
 
-### XSplit VCam Example
+### Backgroun removal with XSplit VCam Example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen3_xsplit.png "XSplit VCam Example")
 
-### personify chromacam Example
+If you want to leverage background removal with XSplit vCam, you can support me (at no additional cost for you) by using this affiliate link: https://link.xsolla.com/uLZFgSKG
+
+Hint: you should add a grey background, which I find best fit for all kind of demos and presentations.
+
+### Background removal with personify chromacam Example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen2_chromacam.png "personify chromacam Example")
+
+You can find personify Chromacam here (which is a little more expensive than XSplit VCam):
+https://personifyinc.com/products/chromacam
+If you want the all in one solution, you should have a look at Personify Presenter.
+https://personifyinc.com/products/presenter
+It also provides a free placable chromacam on your desktop too with additional features.
 
 ### Just the webcam source Example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen4_without_greenscreen.png "Just the webcam without greenscreen removal :)")
 
-## Special virtual background feature: 
-If you have the tool XSplit VCam, you can also leverage from the alpha channel support. 
-Meaning: you can use XSplit vCam to remove your background and your webcam
-output even takes lesser space on your screen / demo / recordings.
-
-Only thing in XSplit VCam: you should add a grey background, which I find best
-fit for all kind of demos and presentations. Other colors will always shine through
-at the border of your webcam image with removed background. E.g. if you use a green
-background you 
-
-If you want to leverage background removal you need XSplit vCam, which you can
-get here (affiliate link, no additional cost for you, but your purchase supports this tool):
-https://link.xsolla.com/uLZFgSKG
-
-If you want the all in one solution, you should have a look at Personify Presenter.
-https://personifyinc.com/products/presenter
-It provides a free placable chromacam on your desktop too with additional features.
 
 ## Building
 Note: If you want to build this, make sure to get the latest AForge.NET C# Libraries at
