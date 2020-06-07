@@ -4,12 +4,12 @@ Webcam on Desktop with support for XSplit vCam and virtual background removal
 vCamDesk brings your webcam on your desktop as a free floating small window. 
 It stays ontop of any other window or your desktop.
 
-# Usage:
+## Usage:
 1) Start the program
 2) Select your webcam & hit start
 3) Wait for the cam to appear and drag your webcam free on top of your windows
 
-# Special virtual background feature: 
+## Special virtual background feature: 
 If you have the tool XSplit VCam, you can also leverage from the alpha channel support. 
 Meaning: you can use XSplit vCam to remove your background and your webcam
 output even takes lesser space on your screen / demo / recordings.
