@@ -27,11 +27,11 @@ If you want the all in one solution, you should have a look at Personify Present
 https://personifyinc.com/products/presenter
 It provides a free placable chromacam on your desktop too with additional features.
 
-# Building
+## Building
 Note: If you want to build this, make sure to get the latest AForge.NET C# Libraries at
 http://aforgenet.com/framework/
 
-# Thoughts
+## Thoughts
 I wrote this program because a lot of tools have kind of silly webcam display 
 if I make demos and screenrecordings. Though I am a big fan of OBS Studio
 it is sometimes overkill and sometimes I don't notice when my webcam is on top
