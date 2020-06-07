@@ -20,7 +20,7 @@ at the border of your webcam image with removed background. E.g. if you use a gr
 background you 
 
 If you want to leverage background removal you need XSplit vCam, which you can
-get here (affiliate link, no additional cost for you but you purchase supports this tool):
+get here (affiliate link, no additional cost for you, but your purchase supports this tool):
 https://link.xsolla.com/uLZFgSKG
 
 If you want the all in one solution, you should have a look at Personify Presenter.
