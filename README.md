@@ -9,6 +9,7 @@ It stays ontop of any other window or your desktop.
 2) Select your webcam & hit start
 
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen1_startscreen.png "Initial Screen")
+
 3) Wait for the cam to appear and drag your webcam free on top of your windows
 Use left mouse button to drag and move
 Use right mouse button to exit 
