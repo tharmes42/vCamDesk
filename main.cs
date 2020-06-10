@@ -98,8 +98,8 @@ class ParentForm : Form
 		MaximizeBox = false;
 		ClientSize = new Size(350, 160);
 		StartPosition = FormStartPosition.CenterScreen;
-		alphaFormWidth = 320;
-		alphaFormHeight = 200;
+		frameSize = new Size(320, 200);
+		
 		InitializeComponent();
 
 		quitProgramDelegate = new QuitProgramDelegate(QuitProgramMethod);
@@ -121,9 +121,9 @@ class ParentForm : Form
 
 				camera1Combo.Items.Add(cameraName);
 				//my preferred webcam is XSplit VCam
-				if (cameraName.Equals("XSplit VCam"))
+				if (videoDevices[i - 1].Name.Equals("XSplit VCam"))
                 {
-					preferredCam = i;
+					preferredCam = i-1;
                 }
 					
 					
@@ -194,6 +194,16 @@ class ParentForm : Form
 		Controls.Add(flipHCheckBox);
 
 
+		//
+		// resolution selected
+		//
+		resolutionLabel = new Label();
+		resolutionLabel.Location = new System.Drawing.Point(10, 140);
+		resolutionLabel.Text = "";
+		resolutionLabel.AutoSize = true;
+		Controls.Add(resolutionLabel);
+
+
 		// 
 		// videoSourcePlayer1
 		// 
@@ -213,6 +223,7 @@ class ParentForm : Form
 
 		// alphaForm will contain the per-pixel-alpha dib
 		alphaForm = new AlphaForm();
+		alphaForm.setFrameSize(frameSize);
 		alphaForm.setParentForm(this);
 		alphaForm.Show();
 	}
@@ -265,7 +276,9 @@ class ParentForm : Form
 		StartCameras();
 		startButton.Enabled = false;
 		stopButton.Enabled = true;
-		global::ParentForm.ActiveForm.Hide();
+		#if !DEBUG
+		 global::ParentForm.ActiveForm.Hide();
+		#endif
 	}
 
 	// On "Stop" button click
@@ -282,7 +295,8 @@ class ParentForm : Form
 	// Start cameras
 	private void StartCameras()
 	{
-		//int resolutionIndex = 0;
+		//default index is 0
+		int resolutionIndex = 0;
 		// create first video source
 		videoSource1 = new VideoCaptureDevice(videoDevices[camera1Combo.SelectedIndex].MonikerString);
 		
@@ -293,8 +307,12 @@ class ParentForm : Form
 		}
 
 		if (videoSource1.VideoCapabilities.Length > 0) {
-			videoSource1.VideoResolution = videoSource1.VideoCapabilities[0]; //It selects the default size
+			videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex]; //It selects the default size
+			resolutionLabel.Text = videoSource1.VideoCapabilities[resolutionIndex].FrameSize.ToString();
+			float aspectRatio = (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Height / (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Width;
+			frameSize.Height = (int)(frameSize.Width * aspectRatio);
 
+			
 			/*		for (int i = 0; i < videoSource1.VideoCapabilities.Length; i++)
 					{
 						string resolution = "Resolution Number " + Convert.ToString(i);
@@ -309,6 +327,7 @@ class ParentForm : Form
 		}
 		videoSourcePlayer1.VideoSource = videoSource1;
 		videoSourcePlayer1.Start();
+		alphaForm.setFrameSize(frameSize);
 	}
 
 	// Stop cameras
@@ -330,12 +349,12 @@ class ParentForm : Form
 	private Bitmap sourceBitmap; // bitmap froum video source player
 	private VideoSourcePlayer videoSourcePlayer1; // Video Source Player
 	private VideoCaptureDevice videoSource1; // selected video source
-	private int alphaFormWidth;
-	private int alphaFormHeight;
+	private Size frameSize;
 	private ComboBox camera1Combo; // Combobox for source webcam
 	private Button startButton;
 	private Button stopButton;
 	private CheckBox flipHCheckBox; // flip horizontal yes/no
+	private Label resolutionLabel; //displays selection resolution
 	FilterInfoCollection videoDevices; // list of video devices
 
 	public delegate void QuitProgramDelegate();
