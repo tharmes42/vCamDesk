@@ -207,8 +207,8 @@ class PerPixelAlphaForm : Form
 	/// <para>Changes the current bitmap with a custom opacity level.  Here is where all happens!</para>
 	public void updateBitmapMethod(Bitmap bitmap, byte opacity)
 	{
-		if (bitmap.PixelFormat != PixelFormat.Format32bppArgb)
-			throw new ApplicationException("The bitmap must be 32ppp with alpha-channel.");
+		//if (bitmap.PixelFormat != PixelFormat.Format32bppArgb)
+			//throw new ApplicationException("The bitmap must be 32ppp with alpha-channel.");
 
 		// The ideia of this is very simple,
 		// 1. Create a compatible DC with screen;

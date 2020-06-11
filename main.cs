@@ -98,7 +98,7 @@ class ParentForm : Form
 		MaximizeBox = false;
 		ClientSize = new Size(350, 160);
 		StartPosition = FormStartPosition.CenterScreen;
-		frameSize = new Size(320, 200);
+		frameSize = new Size(300, 180);
 		
 		InitializeComponent();
 
@@ -193,12 +193,20 @@ class ParentForm : Form
 		flipHCheckBox.Checked = true;
 		Controls.Add(flipHCheckBox);
 
+		//
+		// use transparency yes/no (yes is default)
+		//
+		useTransparencyCheckBox = new CheckBox();
+		useTransparencyCheckBox.Location = new System.Drawing.Point(10, 130);
+		useTransparencyCheckBox.Text = "Transparency";
+		useTransparencyCheckBox.Checked = false;
+		Controls.Add(useTransparencyCheckBox);
 
 		//
 		// resolution selected
 		//
 		resolutionLabel = new Label();
-		resolutionLabel.Location = new System.Drawing.Point(10, 140);
+		resolutionLabel.Location = new System.Drawing.Point(10, 170);
 		resolutionLabel.Text = "";
 		resolutionLabel.AutoSize = true;
 		Controls.Add(resolutionLabel);
@@ -236,12 +244,22 @@ class ParentForm : Form
 		sourceBitmap = videoSourcePlayer1.GetCurrentVideoFrame();
 		if (sourceBitmap != null)
 		{
-			//make transparent to get alpha channel information
-			sourceBitmap.MakeTransparent();
+
 			try
 			{
-				//send sourceBitmap to alphaForm
-				//alphaForm.setBitmap(GraphicTools.ResizeImage(sourceBitmap, alphaFormWidth, alphaFormHeight));
+				if (useTransparencyCheckBox.Checked)
+				{
+					//make transparent to get alpha channel information
+					sourceBitmap.MakeTransparent();
+					//send sourceBitmap to alphaForm
+					//alphaForm.setBitmap(GraphicTools.ResizeImage(sourceBitmap, alphaFormWidth, alphaFormHeight));
+					alphaForm.setBitmap(sourceBitmap);
+				}
+				else
+				{
+					//localCacheBitmap = ReplaceTransparency(sourceBitmap, System.Drawing.Color.White);
+					//sourceBitmap = localCacheBitmap;					
+				}
 				alphaForm.setBitmap(sourceBitmap);
 				//ping alphaForm to update bitmap
 				alphaForm.Invoke(alphaForm.myDelegate);
@@ -254,6 +272,7 @@ class ParentForm : Form
 
 		}
 	}
+
 
 
 	private void videoSource1_NewFrame(object sender, NewFrameEventArgs eventArgs)
@@ -288,6 +307,10 @@ class ParentForm : Form
 
 		startButton.Enabled = true;
 		stopButton.Enabled = false;
+
+		#if !DEBUG
+			sourceBitmap.Save("snapshot.png");
+		#endif
 		this.Dispose();
 
 	}
@@ -345,8 +368,23 @@ class ParentForm : Form
 		stopButton_Click(this, null);
 	}
 
+
+	public static System.Drawing.Bitmap ReplaceTransparency(System.Drawing.Bitmap bitmap, System.Drawing.Color background)
+	{
+		/* Important: you have to set the PixelFormat to remove the alpha channel.
+         * Otherwise you'll still have a transparent image - just without transparent areas */
+		var result = new System.Drawing.Bitmap(bitmap.Size.Width, bitmap.Size.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+		var g = System.Drawing.Graphics.FromImage(result);
+		g.Clear(background);
+		g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+		g.DrawImage(bitmap, 0, 0);
+		return result;
+	}
+
+
 	private AlphaForm alphaForm;	// form to display videofeed with alpha transparency
 	private Bitmap sourceBitmap; // bitmap froum video source player
+	private Bitmap localCacheBitmap; // bitmap used in transformations
 	private VideoSourcePlayer videoSourcePlayer1; // Video Source Player
 	private VideoCaptureDevice videoSource1; // selected video source
 	private Size frameSize;
@@ -354,6 +392,7 @@ class ParentForm : Form
 	private Button startButton;
 	private Button stopButton;
 	private CheckBox flipHCheckBox; // flip horizontal yes/no
+	private CheckBox useTransparencyCheckBox; // use transparency yes/no
 	private Label resolutionLabel; //displays selection resolution
 	FilterInfoCollection videoDevices; // list of video devices
 
