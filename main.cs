@@ -98,7 +98,7 @@ class ParentForm : Form
 		MaximizeBox = false;
 		ClientSize = new Size(350, 160);
 		StartPosition = FormStartPosition.CenterScreen;
-		frameSize = new Size(300, 180);
+		frameSize = new Size(260, 200);
 		noTransparencyCounter = 0;
 		
 		InitializeComponent();
@@ -329,14 +329,16 @@ class ParentForm : Form
 	// On "Stop" button click
 	private void stopButton_Click(object sender, EventArgs e)
 	{
+#if !RELEASE
+			
+		sourceBitmap.Save("snapshot.png");
+#endif
 		StopCameras();
 
 		startButton.Enabled = true;
 		stopButton.Enabled = false;
 
-		#if DEBUG
-			sourceBitmap.Save("snapshot.png");
-		#endif
+
 		this.Dispose();
 
 	}
@@ -357,6 +359,10 @@ class ParentForm : Form
 
 		//you tranparency be used?
 		useTransparency = useTransparencyCheckBox.Checked;
+		if (useTransparency)
+        {
+			frameSize.Width = (int)(frameSize.Width * 1.2); //enlarge the framesize by 20% if transparency is used
+        }
 
 		if (videoSource1.VideoCapabilities.Length > 0) {
 			videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex]; //It selects the default size
