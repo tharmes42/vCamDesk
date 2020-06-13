@@ -99,6 +99,7 @@ class ParentForm : Form
 		ClientSize = new Size(350, 160);
 		StartPosition = FormStartPosition.CenterScreen;
 		frameSize = new Size(300, 180);
+		noTransparencyCounter = 0;
 		
 		InitializeComponent();
 
@@ -199,7 +200,7 @@ class ParentForm : Form
 		useTransparencyCheckBox = new CheckBox();
 		useTransparencyCheckBox.Location = new System.Drawing.Point(10, 130);
 		useTransparencyCheckBox.Text = "Transparency";
-		useTransparencyCheckBox.Checked = false;
+		useTransparencyCheckBox.Checked = true;
 		Controls.Add(useTransparencyCheckBox);
 
 		//
@@ -247,13 +248,37 @@ class ParentForm : Form
 
 			try
 			{
-				if (useTransparencyCheckBox.Checked)
+				if (useTransparency)
 				{
 					//make transparent to get alpha channel information
 					sourceBitmap.MakeTransparent();
+					int alphaPixel = sourceBitmap.GetPixel(1, 1).A;
+					if (alphaPixel > 0)
+                    {
+
+						//if transparency is checked, but the picture has no transparency alpha channel top left 
+						//check limit and count up
+						if (noTransparencyCounter > 60)  //which is about 1-3 seconds
+                        {
+							//disable transparency feature since source has no transparent borders to avoid flickering
+							useTransparency = false;
+                        }
+						else { 
+							noTransparencyCounter++;
+							//then drop the frame to avoid flickering
+							sourceBitmap.Dispose();
+							sourceBitmap = null;
+							return;
+						}
+                    }
+					else
+                    {
+						//we haven transparency, reset counter :)
+						noTransparencyCounter = 0;
+					}
 					//send sourceBitmap to alphaForm
 					//alphaForm.setBitmap(GraphicTools.ResizeImage(sourceBitmap, alphaFormWidth, alphaFormHeight));
-					alphaForm.setBitmap(sourceBitmap);
+					//alphaForm.setBitmap(sourceBitmap);
 				}
 				else
 				{
@@ -266,8 +291,9 @@ class ParentForm : Form
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(this, e.Message, "Oops", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
+				MessageBox.Show(this, e.Message, "Error updating frame. Sorry :/", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				this.Dispose();
+				//return;
 			}
 
 		}
@@ -295,7 +321,7 @@ class ParentForm : Form
 		StartCameras();
 		startButton.Enabled = false;
 		stopButton.Enabled = true;
-		#if !DEBUG
+		#if RELEASE
 		 global::ParentForm.ActiveForm.Hide();
 		#endif
 	}
@@ -308,7 +334,7 @@ class ParentForm : Form
 		startButton.Enabled = true;
 		stopButton.Enabled = false;
 
-		#if !DEBUG
+		#if DEBUG
 			sourceBitmap.Save("snapshot.png");
 		#endif
 		this.Dispose();
@@ -328,6 +354,9 @@ class ParentForm : Form
 			//eventhandler to flip the picture
 			videoSource1.NewFrame += new NewFrameEventHandler(videoSource1_NewFrame);
 		}
+
+		//you tranparency be used?
+		useTransparency = useTransparencyCheckBox.Checked;
 
 		if (videoSource1.VideoCapabilities.Length > 0) {
 			videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex]; //It selects the default size
@@ -381,7 +410,7 @@ class ParentForm : Form
 		return result;
 	}
 
-
+	private int noTransparencyCounter; // every frame without transparency is counted, if limit of successively frames is exceeded turn of tranparency feature
 	private AlphaForm alphaForm;	// form to display videofeed with alpha transparency
 	private Bitmap sourceBitmap; // bitmap froum video source player
 	private Bitmap localCacheBitmap; // bitmap used in transformations
@@ -392,7 +421,8 @@ class ParentForm : Form
 	private Button startButton;
 	private Button stopButton;
 	private CheckBox flipHCheckBox; // flip horizontal yes/no
-	private CheckBox useTransparencyCheckBox; // use transparency yes/no
+	private CheckBox useTransparencyCheckBox; // use transparency yes/no checkbox
+	private bool useTransparency; // use transparency yes/no
 	private Label resolutionLabel; //displays selection resolution
 	FilterInfoCollection videoDevices; // list of video devices
 

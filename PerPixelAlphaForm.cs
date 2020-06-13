@@ -135,6 +135,7 @@ class PerPixelAlphaForm : Form
 {
 	private Bitmap localCacheBitmap;
 	private Size frameSize;
+	ResizeNearestNeighbor resizeFilter; //used to resize the image
 
 	public PerPixelAlphaForm()
 	{
@@ -142,7 +143,8 @@ class PerPixelAlphaForm : Form
 		// This form should not have a border or else Windows will clip it.
 
 		localCacheBitmap = null;
-		frameSize = new Size(320, 200);
+
+		setFrameSize(new Size(320,200));
 
 		myDelegate = new UpdateBitmap(updateBitmapMethod);
 
@@ -189,21 +191,29 @@ class PerPixelAlphaForm : Form
 	public void setFrameSize (Size frameSize)
     {
 		this.frameSize = frameSize;
-    }
+		// create filter
+		resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
+
+	}
 
 
 	public void updateBitmapMethod()
 	{
-
-		// create filter
-		ResizeNearestNeighbor filter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
-		// apply the filter
-		Bitmap newImage = filter.Apply(localCacheBitmap);
-		updateBitmapMethod(newImage, 255);
-		newImage.Dispose();
+        try { 
+			// resize image
+			Bitmap newImage = resizeFilter.Apply(localCacheBitmap);
+			//update image
+			updateBitmapMethod(newImage, 255);
+			//free temp bitmap
+			newImage.Dispose();
+		}
+		catch (System.ArgumentException e)
+        {
+			//this happens if localCacheBitmap is disposed?
+        }
 	}
 
-	
+
 	/// <para>Changes the current bitmap with a custom opacity level.  Here is where all happens!</para>
 	public void updateBitmapMethod(Bitmap bitmap, byte opacity)
 	{
