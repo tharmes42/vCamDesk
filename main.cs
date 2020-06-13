@@ -330,9 +330,18 @@ class ParentForm : Form
 	private void stopButton_Click(object sender, EventArgs e)
 	{
 #if !RELEASE
-			
-		sourceBitmap.Save("snapshot.png");
+		try
+		{
+			sourceBitmap.Save("snapshot.png");
+
+		}
+		catch (Exception ex){
+
+			//ignore it (EVIL!)
+			Console.WriteLine(ex.Message);
+        }
 #endif
+
 		StopCameras();
 
 		startButton.Enabled = true;
