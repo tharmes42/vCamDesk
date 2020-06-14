@@ -31,6 +31,7 @@ using AForge.Video.DirectShow;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using nucs.JsonSettings;
 
 
 
@@ -42,6 +43,15 @@ class AlphaForm : PerPixelAlphaForm
 	{
 		InitializeComponent();
 		parentForm = null;
+		Bitmap startBmp = new Bitmap(this.frameSize.Width, this.frameSize.Height);
+		using (Graphics gfx = Graphics.FromImage(startBmp))
+		using (SolidBrush brush = new SolidBrush(Color.FromArgb(128, 0, 0,0)))
+		{
+			gfx.FillRectangle(brush, 0, 0, this.frameSize.Width, this.frameSize.Height);
+		}
+		this.setBitmap(startBmp);
+		this.updateBitmapMethod();
+
 	}
 
 	private void InitializeComponent()
@@ -84,13 +94,43 @@ class AlphaForm : PerPixelAlphaForm
 
 }
 
+// see https://github.com/Nucs/JsonSettings
+//Step 1: create a class and inherit JsonSettings
+class FormSettings : JsonSettings
+{
+	//Step 2: override a default FileName or keep it empty. Just make sure to specify it when calling Load!
+	//This is used for default saving and loading so you won't have to specify the filename/path every time.
+	//Putting just a filename without folder will put it inside the executing file's directory.
+	public override string FileName { get; set; } = "vCamDesk-config.json"; //for loading and saving.
 
+	#region Settings
+
+	public string lastCam { get; set; } = "";
+	public int flipH { get; set; } = 1;
+	public int useTransparency { get; set; } = 1;	
+	public int frameSizeWidth { get; set; } = 260;
+	public int frameSizeHeight { get; set; } = 146;
+	public int framePositionX { get; set; } = 100;
+	public int framePositionY { get; set; } = 100;
+
+	//[JsonIgnore] public char ImIgnoredAndIWontBeSaved { get; set; }
+
+	#endregion
+	//Step 3: Override parent's constructors
+	public FormSettings() { }
+	public FormSettings(string fileName) : base(fileName) { }
+}
 
 ///<para>The "controller" dialog box.</para>
 class ParentForm : Form
 {
 	public ParentForm()
 	{
+		//Step 4: Load
+		parentFormSettings = JsonSettings.Load<FormSettings>(); //relative path to executing file.
+																			   //or create a new empty
+		//public MySettings Settings = JsonSettings.Construct<MySettings>("config.json");
+
 		//Font= new Font("tahoma", 8);
 		Text= "vCamDesk";
 		FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -98,7 +138,7 @@ class ParentForm : Form
 		MaximizeBox = false;
 		ClientSize = new Size(350, 160);
 		StartPosition = FormStartPosition.CenterScreen;
-		frameSize = new Size(260, 146);
+		frameSize = new Size(parentFormSettings.frameSizeWidth, parentFormSettings.frameSizeHeight);
 		aspectRatio = (float)frameSize.Width / (float)frameSize.Height;
 
 		noTransparencyCounter = 0;
@@ -118,18 +158,16 @@ class ParentForm : Form
 			{
 				throw new Exception();
 			}
-			for (int i = 1, n = videoDevices.Count; i <= n; i++)
+			for (int i = 0, n = videoDevices.Count; i < n; i++)
 			{
-				string cameraName = i + " : " + videoDevices[i - 1].Name;
+				//string cameraName = i + " : " + videoDevices[i - 1].Name;
 
-				camera1Combo.Items.Add(cameraName);
-				//my preferred webcam is XSplit VCam
-				if (videoDevices[i - 1].Name.Equals("XSplit VCam"))
+				camera1Combo.Items.Add(videoDevices[i].Name);
+				//get last cam by name
+				if (videoDevices[i].Name.Equals(parentFormSettings.lastCam))
                 {
-					preferredCam = i-1;
-                }
-					
-					
+					preferredCam = i;
+                }				
 			}
 			camera1Combo.SelectedIndex = preferredCam;
 		}
@@ -159,6 +197,7 @@ class ParentForm : Form
 		camera1Combo.Name = "camera1Combo";
 		camera1Combo.Size = new System.Drawing.Size(322, 21);
 		camera1Combo.TabIndex = 3;
+		camera1Combo.SelectedIndexChanged += new EventHandler(camera1Combo_SelectedIndexChanged);
 		Controls.Add(camera1Combo);
 
 		// 
@@ -193,7 +232,10 @@ class ParentForm : Form
 		flipHCheckBox = new CheckBox();
 		flipHCheckBox.Location = new System.Drawing.Point(10, 110);
 		flipHCheckBox.Text = "Flip horizontal";
-		flipHCheckBox.Checked = true;
+
+		flipHCheckBox.Checked = (parentFormSettings.flipH == 1) ? true : false;
+		flipHCheckBox.CheckStateChanged += new EventHandler(flipHCheckBox_CheckStateChanged);
+
 		Controls.Add(flipHCheckBox);
 
 		//
@@ -202,7 +244,10 @@ class ParentForm : Form
 		useTransparencyCheckBox = new CheckBox();
 		useTransparencyCheckBox.Location = new System.Drawing.Point(10, 130);
 		useTransparencyCheckBox.Text = "Transparency";
-		useTransparencyCheckBox.Checked = true;
+		//int testInt = testBool ? 1 : 0;
+		useTransparencyCheckBox.Checked = (parentFormSettings.useTransparency == 1) ? true : false;
+		useTransparencyCheckBox.CheckStateChanged += new EventHandler(useTransparencyCheckBox_CheckStateChanged);
+
 		Controls.Add(useTransparencyCheckBox);
 
 		//
@@ -234,6 +279,16 @@ class ParentForm : Form
 
 		// alphaForm will contain the per-pixel-alpha dib
 		alphaForm = new AlphaForm();
+		// place alphaForm to the last position, if it is not out of screen dimension
+		var myScreen = Screen.FromControl(this);
+		if (((parentFormSettings.framePositionX + parentFormSettings.frameSizeWidth) > myScreen.Bounds.Width) ||
+			((parentFormSettings.framePositionY + parentFormSettings.frameSizeHeight) > myScreen.Bounds.Height))
+        {
+			//reset location if it is out of screen
+			parentFormSettings.framePositionX = 100;
+			parentFormSettings.framePositionY = 100;
+		}
+		alphaForm.SetDesktopLocation(parentFormSettings.framePositionX, parentFormSettings.framePositionY);
 		alphaForm.setFrameSize(frameSize);
 		alphaForm.setParentForm(this);
 		alphaForm.Show();
@@ -300,7 +355,8 @@ class ParentForm : Form
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(this, e.Message, "Error updating frame. Sorry :/", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				//MessageBox.Show(this, e.Message, "Error updating frame. Sorry :/", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Console.WriteLine(e.Message + "\n Error updating frame. Sorry :/");
 				this.Dispose();
 				//return;
 			}
@@ -321,7 +377,40 @@ class ParentForm : Form
 	// On form closing
 	private void MyForm_FormClosing(object sender, FormClosingEventArgs e)
 	{
-		StopCameras();
+		if (stopButton.Enabled)
+		{
+			StopCameras();
+		}
+		//this.Dispose();
+	}
+
+
+	// On "camera1Combo" change
+	private void camera1Combo_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		ComboBox comboBox = (ComboBox)sender;
+
+		//save the name of the cam to settings
+		parentFormSettings.lastCam = (string)comboBox.SelectedItem;
+	}
+
+	// On "useTransparencyCheckBox" change
+	private void useTransparencyCheckBox_CheckStateChanged(object sender, EventArgs e)
+	{
+		CheckBox checkBox = (CheckBox)sender;
+
+		//save use of transparency flag
+		parentFormSettings.useTransparency = checkBox.Checked ? 1 : 0; 
+	}
+
+	
+	// On "useTransparencyCheckBox" change
+	private void flipHCheckBox_CheckStateChanged(object sender, EventArgs e)
+	{
+		CheckBox checkBox = (CheckBox)sender;
+
+		//save use of transparency flag
+		parentFormSettings.flipH = checkBox.Checked ? 1 : 0;
 	}
 
 	// On "Start" button click
@@ -354,6 +443,7 @@ class ParentForm : Form
 		startButton.Enabled = true;
 		stopButton.Enabled = false;
 
+		parentFormSettings.Save();
 
 		this.Dispose();
 
@@ -415,6 +505,8 @@ class ParentForm : Form
 	public void QuitProgramMethod()
     {
 		this.Show();
+		parentFormSettings.framePositionX = alphaForm.DesktopLocation.X;
+		parentFormSettings.framePositionY = alphaForm.DesktopLocation.Y;
 		alphaForm.Hide();
 		stopButton_Click(this, null);
 	}
@@ -432,6 +524,7 @@ class ParentForm : Form
 		return result;
 	}
 
+	private FormSettings parentFormSettings; //contains the form settings to save them permanent to file
 	private int noTransparencyCounter; // every frame without transparency is counted, if limit of successively frames is exceeded turn of tranparency feature
 	private AlphaForm alphaForm;	// form to display videofeed with alpha transparency
 	private Bitmap sourceBitmap; // bitmap froum video source player

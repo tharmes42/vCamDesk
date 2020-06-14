@@ -133,8 +133,8 @@ class Win32
 /// <author><name>Rui Godinho Lopes</name><email>rui@ruilopes.com</email></author>
 class PerPixelAlphaForm : Form
 {
-	private Bitmap localCacheBitmap;
-	private Size frameSize;
+	protected Bitmap localCacheBitmap;
+	protected Size frameSize;
 	ResizeNearestNeighbor resizeFilter; //used to resize the image
 
 	public PerPixelAlphaForm()
@@ -143,7 +143,7 @@ class PerPixelAlphaForm : Form
 		// This form should not have a border or else Windows will clip it.
 
 		localCacheBitmap = null;
-
+		this.StartPosition = FormStartPosition.Manual;
 		setFrameSize(new Size(320,200));
 
 		myDelegate = new UpdateBitmap(updateBitmapMethod);
