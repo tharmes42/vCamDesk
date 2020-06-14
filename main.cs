@@ -98,7 +98,9 @@ class ParentForm : Form
 		MaximizeBox = false;
 		ClientSize = new Size(350, 160);
 		StartPosition = FormStartPosition.CenterScreen;
-		frameSize = new Size(260, 200);
+		frameSize = new Size(260, 146);
+		aspectRatio = (float)frameSize.Width / (float)frameSize.Height;
+
 		noTransparencyCounter = 0;
 		
 		InitializeComponent();
@@ -252,7 +254,9 @@ class ParentForm : Form
 				{
 					//make transparent to get alpha channel information
 					sourceBitmap.MakeTransparent();
+					//get top left pixel alpha value
 					int alphaPixel = sourceBitmap.GetPixel(1, 1).A;
+					//is top left pixel alpha non-transparent?
 					if (alphaPixel > 0)
                     {
 
@@ -262,7 +266,12 @@ class ParentForm : Form
                         {
 							//disable transparency feature since source has no transparent borders to avoid flickering
 							useTransparency = false;
-                        }
+							//reduce the framesize again, since transparency is not used
+							frameSize.Width = (int)(frameSize.Width / 1.2); 
+							frameSize.Height = (int)(frameSize.Width / aspectRatio);
+							alphaForm.setFrameSize(frameSize);
+
+						}
 						else { 
 							noTransparencyCounter++;
 							//then drop the frame to avoid flickering
@@ -321,9 +330,7 @@ class ParentForm : Form
 		StartCameras();
 		startButton.Enabled = false;
 		stopButton.Enabled = true;
-		#if RELEASE
-		 global::ParentForm.ActiveForm.Hide();
-		#endif
+        global::ParentForm.ActiveForm.Hide();
 	}
 
 	// On "Stop" button click
@@ -376,8 +383,8 @@ class ParentForm : Form
 		if (videoSource1.VideoCapabilities.Length > 0) {
 			videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex]; //It selects the default size
 			resolutionLabel.Text = videoSource1.VideoCapabilities[resolutionIndex].FrameSize.ToString();
-			float aspectRatio = (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Height / (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Width;
-			frameSize.Height = (int)(frameSize.Width * aspectRatio);
+			aspectRatio = (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Width / (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Height;
+			frameSize.Height = (int)(frameSize.Width / aspectRatio);
 
 			
 			/*		for (int i = 0; i < videoSource1.VideoCapabilities.Length; i++)
@@ -431,7 +438,8 @@ class ParentForm : Form
 	private Bitmap localCacheBitmap; // bitmap used in transformations
 	private VideoSourcePlayer videoSourcePlayer1; // Video Source Player
 	private VideoCaptureDevice videoSource1; // selected video source
-	private Size frameSize;
+	private Size frameSize; // target size of frame
+	private float aspectRatio; // aspectRation auf frame
 	private ComboBox camera1Combo; // Combobox for source webcam
 	private Button startButton;
 	private Button stopButton;
