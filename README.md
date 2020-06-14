@@ -4,7 +4,7 @@ Webcam on Desktop with support for 3rd-Party virtual background removal (= no gr
 vCamDesk brings your webcam on your desktop as a free floating small window. 
 It stays always on top of any other window or your desktop.
 
-It also supports chromakey (alphachannel), so webcam tools like XSplit vCam or personify chromacam 
+It also supports chromakey (alphachannel), so webcam tools like Snap Camera, XSplit vCam or personify chromacam 
 which provide virtual background removal without greenscreen are supported and the
 result even takes lesser space on your screen / demo / recordings. :)
 
@@ -20,6 +20,12 @@ You find the latest releases under https://github.com/tharmes42/vCamDesk/release
 3) Wait for the cam to appear and drag your webcam free on top of your windows
 - Use left mouse button to drag and move
 - Use right mouse button to exit 
+
+### Background removal for free with Snap Camera
+![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/snapchat_filter.png "Snap Camera Example")
+
+You can get Snap Camera at https://snapcamera.snapchat.com/. Be sure you copy&paste this url in snap camera to get my snapchat chromakey filter lense: https://www.snapchat.com/unlock/?type=SNAPCODE&uuid=c62e1aee41734de28841b30bc88ff716&metadata=01
+Then you can select Snap Camera and there you go!
 
 ### Background removal with XSplit VCam example
 ![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen3_xsplit.png "XSplit VCam Example")
@@ -55,7 +61,3 @@ if I make demos and screenrecordings. Though I am a big fan of OBS Studio
 it is sometimes overkill and sometimes I don't notice when my webcam is on top
 of content from my screen. To avoid this, a free movable webcam window was
 what I needed :)
-
-I even tried to pull this off with Snap Camera from Snapchat, but the green
-background does not provide the necessary informations so the result looked, well
-extraterrestrial. 
