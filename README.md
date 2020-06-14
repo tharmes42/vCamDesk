@@ -61,7 +61,3 @@ if I make demos and screenrecordings. Though I am a big fan of OBS Studio
 it is sometimes overkill and sometimes I don't notice when my webcam is on top
 of content from my screen. To avoid this, a free movable webcam window was
 what I needed :)
-
-I even tried to pull this off with Snap Camera from Snapchat, but the green
-background does not provide the necessary informations so the result looked, well
-extraterrestrial. 
