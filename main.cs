@@ -32,9 +32,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using nucs.JsonSettings;
-
-
-
+using AForge.Imaging.Filters;
 
 /// <para>Our test form for this sample application.  The bitmap will be displayed in this window.</para>
 class AlphaForm : PerPixelAlphaForm
@@ -49,8 +47,8 @@ class AlphaForm : PerPixelAlphaForm
 		{
 			gfx.FillRectangle(brush, 0, 0, this.frameSize.Width, this.frameSize.Height);
 		}
-		this.setBitmap(startBmp);
-		this.updateBitmapMethod();
+		this.SetBitmap(startBmp);
+		this.UpdateBitmapMethod();
 
 	}
 
@@ -107,7 +105,9 @@ class FormSettings : JsonSettings
 
 	public string lastCam { get; set; } = "";
 	public int flipH { get; set; } = 1;
-	public int useTransparency { get; set; } = 1;	
+	public int cropH { get; set; } = 1;
+	public int cropV { get; set; } = 1;
+	public int useTransparency { get; set; } = 0;	
 	public int frameSizeWidth { get; set; } = 260;
 	public int frameSizeHeight { get; set; } = 146;
 	public int framePositionX { get; set; } = 100;
@@ -217,7 +217,7 @@ class ParentForm : Form
 		// 
 		stopButton = new Button();
 		stopButton.Enabled = false;
-		stopButton.Location = new System.Drawing.Point(10, 80);
+		stopButton.Location = new System.Drawing.Point(100, 50);
 		stopButton.Name = "stopButton";
 		stopButton.Size = new System.Drawing.Size(75, 23);
 		stopButton.TabIndex = 5;
@@ -239,6 +239,31 @@ class ParentForm : Form
 		Controls.Add(flipHCheckBox);
 
 		//
+		// crop horizontal yes/no (no is default)
+		//
+		cropHCheckBox = new CheckBox();
+		cropHCheckBox.Location = new System.Drawing.Point(120, 110);
+		cropHCheckBox.Text = "Crop Horizontal";
+		//int testInt = testBool ? 1 : 0;
+		cropHCheckBox.Checked = (parentFormSettings.cropH == 1) ? true : false;
+		cropHCheckBox.CheckStateChanged += new EventHandler(cropHCheckBox_CheckStateChanged);
+
+		Controls.Add(cropHCheckBox);
+
+		//
+		// crop vertical yes/no (no is default)
+		//
+		cropVCheckBox = new CheckBox();
+		cropVCheckBox.Location = new System.Drawing.Point(120, 130);
+		cropVCheckBox.Text = "Crop Vertical ";
+		//int testInt = testBool ? 1 : 0;
+		cropVCheckBox.Checked = (parentFormSettings.cropV == 1) ? true : false;
+		cropVCheckBox.CheckStateChanged += new EventHandler(cropVCheckBox_CheckStateChanged);
+
+		Controls.Add(cropVCheckBox);
+
+
+		//
 		// use transparency yes/no (yes is default)
 		//
 		useTransparencyCheckBox = new CheckBox();
@@ -250,12 +275,15 @@ class ParentForm : Form
 
 		Controls.Add(useTransparencyCheckBox);
 
+
+		
+
 		//
 		// resolution selected
 		//
 		resolutionLabel = new Label();
-		resolutionLabel.Location = new System.Drawing.Point(10, 170);
-		resolutionLabel.Text = "";
+		resolutionLabel.Location = new System.Drawing.Point(10, 80);
+		resolutionLabel.Text = "          n/a        ";
 		resolutionLabel.AutoSize = true;
 		Controls.Add(resolutionLabel);
 
@@ -289,7 +317,7 @@ class ParentForm : Form
 			parentFormSettings.framePositionY = 100;
 		}
 		alphaForm.SetDesktopLocation(parentFormSettings.framePositionX, parentFormSettings.framePositionY);
-		alphaForm.setFrameSize(frameSize);
+		alphaForm.SetTargetFrameSizeAndCrop(frameSize);
 		alphaForm.setParentForm(this);
 		alphaForm.Show();
 	}
@@ -324,7 +352,7 @@ class ParentForm : Form
 							//reduce the framesize again, since transparency is not used
 							frameSize.Width = (int)(frameSize.Width / 1.2); 
 							frameSize.Height = (int)(frameSize.Width / aspectRatio);
-							alphaForm.setFrameSize(frameSize);
+							alphaForm.SetTargetFrameSizeAndCrop(frameSize);
 
 						}
 						else { 
@@ -349,7 +377,7 @@ class ParentForm : Form
 					//localCacheBitmap = ReplaceTransparency(sourceBitmap, System.Drawing.Color.White);
 					//sourceBitmap = localCacheBitmap;					
 				}
-				alphaForm.setBitmap(sourceBitmap);
+				alphaForm.SetBitmap(sourceBitmap);
 				//ping alphaForm to update bitmap
 				alphaForm.Invoke(alphaForm.myDelegate);
 			}
@@ -404,7 +432,7 @@ class ParentForm : Form
 	}
 
 	
-	// On "useTransparencyCheckBox" change
+	// On "flipHCheckBox" change
 	private void flipHCheckBox_CheckStateChanged(object sender, EventArgs e)
 	{
 		CheckBox checkBox = (CheckBox)sender;
@@ -413,13 +441,34 @@ class ParentForm : Form
 		parentFormSettings.flipH = checkBox.Checked ? 1 : 0;
 	}
 
+	// On "cropHCheckBox" change
+	private void cropHCheckBox_CheckStateChanged(object sender, EventArgs e)
+	{
+		CheckBox checkBox = (CheckBox)sender;
+
+		//save use of crop horizontal flag
+		parentFormSettings.cropH = checkBox.Checked ? 1 : 0;
+	}
+
+	// On "cropVCheckBox" change
+	private void cropVCheckBox_CheckStateChanged(object sender, EventArgs e)
+	{
+		CheckBox checkBox = (CheckBox)sender;
+
+		//save use of crop horizontal flag
+		parentFormSettings.cropV = checkBox.Checked ? 1 : 0;
+	}
+
+
 	// On "Start" button click
 	private void startButton_Click(object sender, EventArgs e)
 	{
 		StartCameras();
 		startButton.Enabled = false;
 		stopButton.Enabled = true;
-        global::ParentForm.ActiveForm.Hide();
+//#if !DEBUG
+		global::ParentForm.ActiveForm.Hide();
+//#endif
 	}
 
 	// On "Stop" button click
@@ -428,7 +477,7 @@ class ParentForm : Form
 #if !RELEASE
 		try
 		{
-			sourceBitmap.Save("snapshot.png");
+			sourceBitmap.Save("vCamDesk-snapshot.png");
 
 		}
 		catch (Exception ex){
@@ -491,7 +540,13 @@ class ParentForm : Form
 		}
 		videoSourcePlayer1.VideoSource = videoSource1;
 		videoSourcePlayer1.Start();
-		alphaForm.setFrameSize(frameSize);
+
+		//set Crop Settings on alphaForm
+		alphaForm.CropH = cropHCheckBox.Checked;
+		alphaForm.CropV = cropVCheckBox.Checked;
+		//update target size and activate crop
+		alphaForm.SetTargetFrameSizeAndCrop(frameSize);
+
 	}
 
 	// Stop cameras
@@ -538,6 +593,8 @@ class ParentForm : Form
 	private Button stopButton;
 	private CheckBox flipHCheckBox; // flip horizontal yes/no
 	private CheckBox useTransparencyCheckBox; // use transparency yes/no checkbox
+	private CheckBox cropHCheckBox; // crop horizontal 
+	private CheckBox cropVCheckBox; // crop vertical
 	private bool useTransparency; // use transparency yes/no
 	private Label resolutionLabel; //displays selection resolution
 	FilterInfoCollection videoDevices; // list of video devices

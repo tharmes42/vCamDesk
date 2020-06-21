@@ -135,7 +135,12 @@ class PerPixelAlphaForm : Form
 {
 	protected Bitmap localCacheBitmap;
 	protected Size frameSize;
-	ResizeNearestNeighbor resizeFilter; //used to resize the image
+	private ResizeNearestNeighbor resizeFilter; //used to resize the image
+	private Crop cropFilter;
+
+	public bool CropH { get; set; } = false;  //crop the image horizontal
+	public bool CropV { get; set; } = false;  //crop the image vertical
+
 
 	public PerPixelAlphaForm()
 	{
@@ -144,9 +149,8 @@ class PerPixelAlphaForm : Form
 
 		localCacheBitmap = null;
 		this.StartPosition = FormStartPosition.Manual;
-		setFrameSize(new Size(320,200));
-
-		myDelegate = new UpdateBitmap(updateBitmapMethod);
+		SetTargetFrameSizeAndCrop(new Size(320,200));
+		myDelegate = new UpdateBitmap(UpdateBitmapMethod);
 
 	}
 
@@ -179,7 +183,7 @@ class PerPixelAlphaForm : Form
 
 
 	/// <para>Changes the local bitmap.</para>
-	public void setBitmap(Bitmap bitmap)
+	public void SetBitmap(Bitmap bitmap)
 	{
 		if (localCacheBitmap != null)
 			localCacheBitmap.Dispose();
@@ -188,24 +192,66 @@ class PerPixelAlphaForm : Form
 	}
 
 
-	public void setFrameSize (Size frameSize)
+	/// <summary>
+	/// Change target framesize to resize to and update crop information
+	/// </summary>
+	/// <param name="frameSize"></param>
+	public void SetTargetFrameSizeAndCrop (Size frameSize)
     {
 		this.frameSize = frameSize;
+		int cropHPixelOffset = 0;
+		int cropVPixelOffset = 0;
+
+		if (CropH)
+		{
+			cropHPixelOffset = (int)((float)frameSize.Height * 0.075); // 7,5% top + bottom = 15% horizontal crop  //TODO: use aspect ratio to calculate percentage
+		}
+			
+		if (CropV) { 
+			cropVPixelOffset = (int)((float)frameSize.Width * 0.1); // 10% left + right = 20% vertical crop
+		}
 		// create filter
 		resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
+		cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width-(2*cropVPixelOffset), frameSize.Height-(2*cropHPixelOffset)));
 
 	}
 
 
-	public void updateBitmapMethod()
+
+	public void UpdateBitmapMethod()
 	{
-        try { 
-			// resize image
+        try {
+			/*// resize image
 			Bitmap newImage = resizeFilter.Apply(localCacheBitmap);
 			//update image
 			updateBitmapMethod(newImage, 255);
 			//free temp bitmap
-			newImage.Dispose();
+			newImage.Dispose();*/
+
+
+			// resize image
+			Bitmap resizedImage = resizeFilter.Apply(localCacheBitmap);
+
+			//if image should be cropped apply filter, otherwise just set it to resized image
+			if (CropH || CropV)
+			{
+				Bitmap croppedImage = cropFilter.Apply(resizedImage);
+				//update image
+				UpdateBitmapMethod(croppedImage, 255);
+				//free temp bitmap
+				croppedImage.Dispose();
+			}
+			else
+            {
+				//update image
+				UpdateBitmapMethod(resizedImage, 255);
+
+			}
+			//free temp bitmap
+			resizedImage.Dispose();
+
+			
+
 		}
 		catch (System.ArgumentException e)
         {
@@ -215,7 +261,7 @@ class PerPixelAlphaForm : Form
 
 
 	/// <para>Changes the current bitmap with a custom opacity level.  Here is where all happens!</para>
-	public void updateBitmapMethod(Bitmap bitmap, byte opacity)
+	public void UpdateBitmapMethod(Bitmap bitmap, byte opacity)
 	{
 		//if (bitmap.PixelFormat != PixelFormat.Format32bppArgb)
 			//throw new ApplicationException("The bitmap must be 32ppp with alpha-channel.");
