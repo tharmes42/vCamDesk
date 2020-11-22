@@ -93,6 +93,7 @@ class AlphaForm : VcdPerPixelAlphaForm
 
 }
 
+//
 // Load default application setting from a JSON file in the same directory
 // see https://github.com/Nucs/JsonSettings
 //Step 1: create a class and inherit JsonSettings

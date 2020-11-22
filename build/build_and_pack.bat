@@ -1,8 +1,18 @@
-@REM echo off
+@ECHO OFF
 REM This batch program links .exe and .dll-Files together and creates zip-File for release
-REM get version for the future
-REM  https://stackoverflow.com/questions/1706892/how-do-i-retrieve-the-version-of-a-file-from-a-batch-file-on-windows-vista
+
 cd "..\bin\Release"
+
+REM get version of build
+FOR /F "USEBACKQ" %%F IN (`powershell -NoLogo -NoProfile -Command ^(Get-Item "vCamDesk-non-packed.exe"^).VersionInfo.FileVersion`) DO (SET fileVersion=%%F)
+echo Determined release from vCamDesk-non-packed.exe: %fileVersion%
+
+REM merge .exe and .dll files together
 ..\..\packages\ILMerge.3.0.40\tools\net452\ILMerge.exe /log /ndebug /out:vCamDesk.exe vCamDesk-non-packed.exe AForge.Controls.dll AForge.dll AForge.Imaging.dll AForge.Math.dll AForge.Video.DirectShow.dll AForge.Video.dll Newtonsoft.Json.dll nucs.JsonSettings.dll
-"C:\Program Files\7-Zip\7z.exe" a -tzip vCamDesk-pre-release-v0.xxx.zip vCamDesk.exe ../../backgrounds
+
+REM zip everything
+"C:\Program Files\7-Zip\7z.exe" a -tzip vCamDesk-release-v%fileVersion%.zip vCamDesk.exe ../../backgrounds
+
+echo Find the packed release here:
+cd
 pause
