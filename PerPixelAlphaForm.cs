@@ -131,7 +131,7 @@ class Win32
 
 /// <para>Your PerPixel form should inherit this class</para>
 /// <author><name>Rui Godinho Lopes</name><email>rui@ruilopes.com</email></author>
-class PerPixelAlphaForm : Form
+class VcdPerPixelAlphaForm : Form
 {
 	protected Bitmap localCacheBitmap;
 	protected Size frameSize;
@@ -142,7 +142,7 @@ class PerPixelAlphaForm : Form
 	public bool CropV { get; set; } = false;  //crop the image vertical
 
 
-	public PerPixelAlphaForm()
+	public VcdPerPixelAlphaForm()
 	{
 		InitializeComponent();
 		// This form should not have a border or else Windows will clip it.

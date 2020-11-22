@@ -33,9 +33,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using nucs.JsonSettings;
 using AForge.Imaging.Filters;
+using PerPixelAlphaForm;
 
 /// <para>Our test form for this sample application.  The bitmap will be displayed in this window.</para>
-class AlphaForm : PerPixelAlphaForm
+class AlphaForm : VcdPerPixelAlphaForm
 {
 	public AlphaForm()
 	{
@@ -92,6 +93,7 @@ class AlphaForm : PerPixelAlphaForm
 
 }
 
+// Load default application setting from a JSON file in the same directory
 // see https://github.com/Nucs/JsonSettings
 //Step 1: create a class and inherit JsonSettings
 class FormSettings : JsonSettings
@@ -122,9 +124,9 @@ class FormSettings : JsonSettings
 }
 
 ///<para>The "controller" dialog box.</para>
-class ParentForm : Form
+class OldParentForm : Form
 {
-	public ParentForm()
+	public OldParentForm()
 	{
 		//Step 4: Load
 		parentFormSettings = JsonSettings.Load<FormSettings>(); //relative path to executing file.
@@ -318,8 +320,8 @@ class ParentForm : Form
 		}
 		alphaForm.SetDesktopLocation(parentFormSettings.framePositionX, parentFormSettings.framePositionY);
 		alphaForm.SetTargetFrameSizeAndCrop(frameSize);
-		alphaForm.setParentForm(this);
-		alphaForm.Show();
+		////alphaForm.setParentForm(this);
+		////alphaForm.Show();
 	}
 
 
@@ -467,7 +469,7 @@ class ParentForm : Form
 		startButton.Enabled = false;
 		stopButton.Enabled = true;
 //#if !DEBUG
-		global::ParentForm.ActiveForm.Hide();
+		global::OldParentForm.ActiveForm.Hide();
 //#endif
 	}
 
@@ -477,8 +479,10 @@ class ParentForm : Form
 #if !RELEASE
 		try
 		{
-			sourceBitmap.Save("vCamDesk-snapshot.png");
-
+			if (sourceBitmap != null)
+			{
+				sourceBitmap.Save("vCamDesk-snapshot.png");
+			}
 		}
 		catch (Exception ex){
 
@@ -612,6 +616,7 @@ class VCamDeskApp
 	[STAThread]
 	public static void Main()
 	{
-		Application.Run(new ParentForm());
+		//Application.Run(new OldParentForm());
+		Application.Run(new PerPixelAlphaForm.ParentForm());
 	}
 }
