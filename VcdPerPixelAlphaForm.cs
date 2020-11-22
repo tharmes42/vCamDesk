@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Drawing.Drawing2D;
 using AForge.Imaging.Filters;
+using PerPixelAlphaForm;
 
 
 
@@ -94,12 +95,19 @@ class Win32
 	public enum VirtualKeyStates : int
 	{
 		// see https://www.pinvoke.net/default.aspx/user32.getkeystate
+		// better: use System.Windows.Forms.Keys
 		VK_LBUTTON = 0x01,
 		VK_RBUTTON = 0x02,
 		VK_CANCEL = 0x03,
-		VK_MBUTTON = 0x04
+		VK_MBUTTON = 0x04,
+		VK_OEM_PLUS = 0xBB, //For any country / region, the '+' key
+		VK_OEM_COMMA = 0xBC,  //For any country / region, the ',' key
+		VK_OEM_MINUS  = 0xBD,  //For any country / region, the '-' key
+		VK_OEM_PERIOD = 0xBE  //For any country / region, the '.' key
 	}
-    
+
+	
+
 
 	[DllImport("user32.dll", ExactSpelling=true, SetLastError=true)]
 	public static extern Bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref Point pptDst, ref Size psize, IntPtr hdcSrc, ref Point pprSrc, Int32 crKey, ref BLENDFUNCTION pblend, Int32 dwFlags);
@@ -125,18 +133,30 @@ class Win32
 
 	[DllImport("USER32.dll")]
 	public static extern short GetKeyState(VirtualKeyStates nVirtKey);
+
+
+	public const int WM_NCLBUTTONDOWN = 0xA1;
+	public const int HT_CAPTION = 0x2;
+
+	[DllImportAttribute("user32.dll")]
+	public static extern int SendMessage(IntPtr hWnd,
+					 int Msg, int wParam, int lParam);
+	[DllImportAttribute("user32.dll")]
+	public static extern bool ReleaseCapture();
 }
 
 
 
 /// <para>Your PerPixel form should inherit this class</para>
-/// <author><name>Rui Godinho Lopes</name><email>rui@ruilopes.com</email></author>
 class VcdPerPixelAlphaForm : Form
 {
 	protected Bitmap localCacheBitmap;
 	protected Size frameSize;
 	private ResizeNearestNeighbor resizeFilter; //used to resize the image
 	private Crop cropFilter;
+	int cropHPixelOffset = 0;
+	int cropVPixelOffset = 0;
+
 
 	public bool CropH { get; set; } = false;  //crop the image horizontal
 	public bool CropV { get; set; } = false;  //crop the image vertical
@@ -146,7 +166,7 @@ class VcdPerPixelAlphaForm : Form
 	{
 		InitializeComponent();
 		// This form should not have a border or else Windows will clip it.
-
+		parentForm = null;
 		localCacheBitmap = null;
 		this.StartPosition = FormStartPosition.Manual;
 		SetTargetFrameSizeAndCrop(new Size(320,200));
@@ -160,8 +180,17 @@ class VcdPerPixelAlphaForm : Form
 		FormBorderStyle = FormBorderStyle.None;
 
 		this.ResumeLayout(false);
+		this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.VcdPerPixelAlphaForm_KeyDown);
+		this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.VcdPerPixelAlphaForm_MouseDown);
 
 	}
+
+	public void setParentForm(ParentForm parentForm)
+	{
+		this.parentForm = parentForm;
+	}
+
+	private ParentForm parentForm;
 
 	///<para>Frees our bitmap.</para>
 	protected override void Dispose(bool disposing)
@@ -199,8 +228,6 @@ class VcdPerPixelAlphaForm : Form
 	public void SetTargetFrameSizeAndCrop (Size frameSize)
     {
 		this.frameSize = frameSize;
-		int cropHPixelOffset = 0;
-		int cropVPixelOffset = 0;
 
 		if (CropH)
 		{
@@ -216,6 +243,73 @@ class VcdPerPixelAlphaForm : Form
 
 	}
 
+	/// <summary>
+	/// enlarge target framesize
+	/// </summary>
+	public void Enlarge()
+	{
+		frameSize.Width= (int)(frameSize.Width * 1.1);
+		frameSize.Height = (int)(frameSize.Height * 1.1);
+
+		// create filter
+		resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
+		cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width - (2 * cropVPixelOffset), frameSize.Height - (2 * cropHPixelOffset)));
+
+	}
+
+	/// <summary>
+	/// shrink target framesize
+	/// </summary>
+	public void Shrink()
+	{
+		if (frameSize.Width > 100) { 
+			frameSize.Width = (int)(frameSize.Width / 1.1);
+			frameSize.Height = (int)(frameSize.Height / 1.1);
+
+			// create filter
+			resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
+			cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width - (2 * cropVPixelOffset), frameSize.Height - (2 * cropHPixelOffset)));
+		}
+	}
+
+
+	/// <summary>
+	/// crop target framesize more
+	/// </summary>
+	public void CropMore()
+	{
+		int aspectRatio = (int)(frameSize.Width / frameSize.Height);
+
+		if (cropHPixelOffset < ((int)((float)frameSize.Height / 3)) )
+		{
+			cropHPixelOffset = cropHPixelOffset + (int)((float)frameSize.Height * 0.1);
+			cropVPixelOffset = cropVPixelOffset + (int)((float)frameSize.Width * 0.1);
+
+			// create filter
+			resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
+			cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width - (2 * cropVPixelOffset), frameSize.Height - (2 * cropHPixelOffset)));
+		}
+	}
+
+	/// <summary>
+	/// crop target framesize less
+	/// </summary>
+	public void CropLess()
+	{
+		cropHPixelOffset = cropHPixelOffset - (int)((float)frameSize.Height * 0.1);
+		cropVPixelOffset = cropVPixelOffset - (int)((float)frameSize.Width * 0.1);
+
+		//you can and should not negative crop :)
+		if (cropHPixelOffset<0 || cropVPixelOffset < 0)
+        {
+			cropHPixelOffset = 0;
+			cropVPixelOffset = 0;
+        }
+
+		// create filter
+		resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
+		cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width - (2 * cropVPixelOffset), frameSize.Height - (2 * cropHPixelOffset)));
+	}
 
 
 	public void UpdateBitmapMethod()
@@ -233,7 +327,7 @@ class VcdPerPixelAlphaForm : Form
 			Bitmap resizedImage = resizeFilter.Apply(localCacheBitmap);
 
 			//if image should be cropped apply filter, otherwise just set it to resized image
-			if (CropH || CropV)
+			if (cropHPixelOffset > 0 )
 			{
 				Bitmap croppedImage = cropFilter.Apply(resizedImage);
 				//update image
@@ -315,5 +409,50 @@ class VcdPerPixelAlphaForm : Form
 	public delegate void UpdateBitmap();
 	public UpdateBitmap myDelegate;
 
+	private void VcdPerPixelAlphaForm_KeyDown(object sender, KeyEventArgs e)
+	{
+		//TODO
+		// https://www.codeproject.com/Articles/11114/Move-window-form-without-Titlebar-in-C
+			  //DO SOMETHING
+		switch (e.KeyCode)
+        {
+			case Keys.Oemplus : 
+				//Console.WriteLine("+");
+				Enlarge();
+				break;
+			case Keys.OemMinus:
+				//Console.WriteLine("-");
+				Shrink();
+				break;
+			case Keys.Oemcomma:
+				//Console.WriteLine(",");
+				CropMore();
+				break;
+			case Keys.OemPeriod:
+				//Console.WriteLine(".");
+				CropLess();
+				break;
+
+			default:
+				//Console.WriteLine("Other key");
+				break;
+		}
+				
+	}
+
+	private void VcdPerPixelAlphaForm_MouseDown(object sender, MouseEventArgs e)
+	{
+		switch (e.Button)
+        {
+			case MouseButtons.Left: 
+				Win32.ReleaseCapture();
+				Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, Win32.HT_CAPTION, 0);
+				break;
+			case MouseButtons.Right:
+				//Console.WriteLine("Right Click detected, bye!");
+				parentForm.Invoke(parentForm.quitProgramDelegate);
+				break;
+		}
+	}
 
 }

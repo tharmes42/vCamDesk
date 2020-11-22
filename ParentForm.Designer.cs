@@ -36,6 +36,7 @@
             this.startButton = new System.Windows.Forms.Button();
             this.stopButton = new System.Windows.Forms.Button();
             this.resolutionLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // camera1Combo
@@ -78,6 +79,7 @@
             this.cropHCheckBox.TabIndex = 3;
             this.cropHCheckBox.Text = "Crop Horizontal";
             this.cropHCheckBox.UseVisualStyleBackColor = true;
+            this.cropHCheckBox.Visible = false;
             this.cropHCheckBox.CheckedChanged += new System.EventHandler(this.cropHCheckBox_CheckedChanged);
             // 
             // cropVCheckBox
@@ -89,6 +91,7 @@
             this.cropVCheckBox.TabIndex = 4;
             this.cropVCheckBox.Text = "Crop Vertical";
             this.cropVCheckBox.UseVisualStyleBackColor = true;
+            this.cropVCheckBox.Visible = false;
             this.cropVCheckBox.CheckedChanged += new System.EventHandler(this.cropVCheckBox_CheckedChanged);
             // 
             // startButton
@@ -120,11 +123,21 @@
             this.resolutionLabel.TabIndex = 7;
             this.resolutionLabel.Text = "label1";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(74, 389);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(414, 25);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Hint: use keys +/- to zoom and ,/. to crop video";
+            // 
             // ParentForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.resolutionLabel);
             this.Controls.Add(this.stopButton);
             this.Controls.Add(this.startButton);
@@ -155,5 +168,6 @@
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.Label resolutionLabel;
+        private System.Windows.Forms.Label label1;
     }
 }

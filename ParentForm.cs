@@ -1,4 +1,32 @@
-﻿using AForge.Controls;
+﻿/*
+MIT License
+
+Copyright(c) 2020 Tobias Harmes
+
+Portions Copyright © 2002-2004 Rui Godinho Lopes
+many thanks to him for the example "PerPixelAlphaForm", this software is using parts from 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+
+using AForge.Controls;
 using AForge.Video;
 using AForge.Video.DirectShow;
 using nucs.JsonSettings;
@@ -23,7 +51,7 @@ namespace PerPixelAlphaForm
 
 		}
 
-		///<para>Constructs and initializes all child controls of this dialog box.</para>
+		//Constructs and initializes all child controls of this dialog box.
 		private void InitializeAdditionalComponents()
 		{
 
@@ -119,7 +147,7 @@ namespace PerPixelAlphaForm
 				camera1Combo.Enabled = false;
 			}
 
-
+			this.Text = this.Text + " Build: " + Application.ProductVersion; 
 		}//initializeComponents2
 
 		//on new frame update alphaForm via delegate 
@@ -336,9 +364,7 @@ namespace PerPixelAlphaForm
 			StartCameras();
 			startButton.Enabled = false;
 			stopButton.Enabled = true;
-			//#if !DEBUG
-			global::OldParentForm.ActiveForm.Hide();
-			//#endif
+			ActiveForm.Hide();
 		}
 
         private void ParentForm_FormClosing(object sender, FormClosingEventArgs e)
