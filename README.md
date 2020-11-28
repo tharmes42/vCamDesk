@@ -48,8 +48,10 @@ It also provides a free placable chromacam on your desktop too with additional f
 
 
 ## Building & dependencies
-Note: If you want to build this, make sure to get the latest AForge.NET C# Libraries at
-http://aforgenet.com/framework/
+Note: If you want to build this, make sure to get the nuget-packages referenced in this project:
+- Package Aforge.* / the latest AForge.NET C# Libraries at http://aforgenet.com/framework/
+- Package ILMerge
+- Package Newtonsoft.Json and nucs.JsonSettings
 
 ## Thanks!
 I would not have figured it out to get this alphachannel thing working in c# without the excellent demo by Rui Godinho Lopes, so many thanks to him for his PerPixelAlphaForm example.

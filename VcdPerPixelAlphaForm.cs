@@ -433,9 +433,9 @@ class VcdPerPixelAlphaForm : Form
 				CropLess();
 				break;
 
-			default:
+			/*default:
 				//Console.WriteLine("Other key");
-				break;
+				break;*/
 		}
 				
 	}
