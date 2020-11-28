@@ -41,6 +41,7 @@ class AlphaForm : VcdPerPixelAlphaForm
 	public AlphaForm()
 	{
 		InitializeComponent();
+
 		Bitmap startBmp = new Bitmap(this.frameSize.Width, this.frameSize.Height);
 		using (Graphics gfx = Graphics.FromImage(startBmp))
 		using (SolidBrush brush = new SolidBrush(Color.FromArgb(128, 0, 0,0)))
@@ -49,7 +50,15 @@ class AlphaForm : VcdPerPixelAlphaForm
 		}
 		this.SetBitmap(startBmp);
 		this.UpdateBitmapMethod();
-
+		this.StartPosition = FormStartPosition.Manual;
+		foreach (var scrn in Screen.AllScreens)
+		{
+			if (scrn.Bounds.Contains(this.Location))
+			{
+				this.Location = new Point(scrn.Bounds.Left, scrn.Bounds.Top);
+				return;
+			}
+		}
 	}
 
 	private void InitializeComponent()
@@ -106,8 +115,7 @@ class FormSettings : JsonSettings
 
 	public string lastCam { get; set; } = "";
 	public int flipH { get; set; } = 1;
-	public int cropH { get; set; } = 1;
-	public int cropV { get; set; } = 1;
+	public int cropAuto { get; set; } = 1;
 	public int useTransparency { get; set; } = 0;	
 	public int frameSizeWidth { get; set; } = 260;
 	public int frameSizeHeight { get; set; } = 146;

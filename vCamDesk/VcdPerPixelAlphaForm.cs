@@ -152,14 +152,15 @@ class VcdPerPixelAlphaForm : Form
 {
 	protected Bitmap localCacheBitmap;
 	protected Size frameSize;
-	private ResizeNearestNeighbor resizeFilter; //used to resize the image
-	private Crop cropFilter;
+	protected Size sourceFrameSize;
+	private ResizeNearestNeighbor resizeFilter; //used to resize the image, based on target image size
+	private Crop cropFilter; //used to crop the image, based on source image size
 	int cropHPixelOffset = 0;
 	int cropVPixelOffset = 0;
 
 
-	public bool CropH { get; set; } = false;  //crop the image horizontal
-	public bool CropV { get; set; } = false;  //crop the image vertical
+	public bool CropAuto { get; set; } = false;  //crop the image automatically
+
 
 
 	public VcdPerPixelAlphaForm()
@@ -168,7 +169,9 @@ class VcdPerPixelAlphaForm : Form
 		// This form should not have a border or else Windows will clip it.
 		parentForm = null;
 		localCacheBitmap = null;
-		this.StartPosition = FormStartPosition.Manual;
+		//this.StartPosition = FormStartPosition.Manual;
+
+
 		SetTargetFrameSizeAndCrop(new Size(320,200));
 		myDelegate = new UpdateBitmap(UpdateBitmapMethod);
 
@@ -217,6 +220,7 @@ class VcdPerPixelAlphaForm : Form
 		if (localCacheBitmap != null)
 			localCacheBitmap.Dispose();
 		localCacheBitmap = bitmap;
+		sourceFrameSize = localCacheBitmap.Size;
 		//SetBitmap(bitmap, 255);
 	}
 
@@ -229,17 +233,21 @@ class VcdPerPixelAlphaForm : Form
     {
 		this.frameSize = frameSize;
 
-		if (CropH)
-		{
-			cropHPixelOffset = (int)((float)frameSize.Height * 0.075); // 7,5% top + bottom = 15% horizontal crop  //TODO: use aspect ratio to calculate percentage
-		}
-			
-		if (CropV) { 
-			cropVPixelOffset = (int)((float)frameSize.Width * 0.1); // 10% left + right = 20% vertical crop
-		}
-		// create filter
+		cropHPixelOffset = 0;
+		cropVPixelOffset = 0;
+		
+		updateFilters();
+	}
+
+	/// <summary>
+	/// create and update filters for resize and crop
+	/// </summary>
+	private void updateFilters()
+    {
+
+		cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, sourceFrameSize.Width - (2 * cropVPixelOffset), sourceFrameSize.Height - (2 * cropHPixelOffset)));
 		resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
-		cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width-(2*cropVPixelOffset), frameSize.Height-(2*cropHPixelOffset)));
+		
 
 	}
 
@@ -251,9 +259,7 @@ class VcdPerPixelAlphaForm : Form
 		frameSize.Width= (int)(frameSize.Width * 1.1);
 		frameSize.Height = (int)(frameSize.Height * 1.1);
 
-		// create filter
-		resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
-		cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width - (2 * cropVPixelOffset), frameSize.Height - (2 * cropHPixelOffset)));
+		updateFilters();
 
 	}
 
@@ -266,9 +272,7 @@ class VcdPerPixelAlphaForm : Form
 			frameSize.Width = (int)(frameSize.Width / 1.1);
 			frameSize.Height = (int)(frameSize.Height / 1.1);
 
-			// create filter
-			resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
-			cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width - (2 * cropVPixelOffset), frameSize.Height - (2 * cropHPixelOffset)));
+			updateFilters();
 		}
 	}
 
@@ -285,9 +289,7 @@ class VcdPerPixelAlphaForm : Form
 			cropHPixelOffset = cropHPixelOffset + (int)((float)frameSize.Height * 0.1);
 			cropVPixelOffset = cropVPixelOffset + (int)((float)frameSize.Width * 0.1);
 
-			// create filter
-			resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
-			cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width - (2 * cropVPixelOffset), frameSize.Height - (2 * cropHPixelOffset)));
+			updateFilters();
 		}
 	}
 
@@ -306,9 +308,7 @@ class VcdPerPixelAlphaForm : Form
 			cropVPixelOffset = 0;
         }
 
-		// create filter
-		resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
-		cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, frameSize.Width - (2 * cropVPixelOffset), frameSize.Height - (2 * cropHPixelOffset)));
+		updateFilters();
 	}
 
 
@@ -323,28 +323,32 @@ class VcdPerPixelAlphaForm : Form
 			newImage.Dispose();*/
 
 
-			// resize image
-			Bitmap resizedImage = resizeFilter.Apply(localCacheBitmap);
+
 
 			//if image should be cropped apply filter, otherwise just set it to resized image
 			if (cropHPixelOffset > 0 )
 			{
-				Bitmap croppedImage = cropFilter.Apply(resizedImage);
+				Bitmap croppedImage = cropFilter.Apply(localCacheBitmap);
+				Bitmap resizedImageAfterCrop = resizeFilter.Apply(croppedImage);
 				//update image
-				UpdateBitmapMethod(croppedImage, 255);
-				//free temp bitmap
+				UpdateBitmapMethod(resizedImageAfterCrop, 255);
+
+
+				resizedImageAfterCrop.Dispose();
 				croppedImage.Dispose();
 			}
 			else
             {
+				// resize image
+				Bitmap resizedImage = resizeFilter.Apply(localCacheBitmap);
 				//update image
 				UpdateBitmapMethod(resizedImage, 255);
+				//free temp bitmap
+				resizedImage.Dispose();
 
 			}
-			//free temp bitmap
-			resizedImage.Dispose();
-
 			
+
 
 		}
 		catch (System.ArgumentException e)

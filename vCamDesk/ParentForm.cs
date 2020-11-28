@@ -63,10 +63,9 @@ namespace PerPixelAlphaForm
 			flipHCheckBox.Checked = (parentFormSettings.flipH == 1) ? true : false;
 
 			// crop horizontal yes/no (no is default)
-			cropHCheckBox.Checked = (parentFormSettings.cropH == 1) ? true : false;
+			cropAutoCheckBox.Checked = (parentFormSettings.cropAuto == 1) ? true : false;
 
-			// crop vertical yes/no (no is default)
-			cropVCheckBox.Checked = (parentFormSettings.cropV == 1) ? true : false;
+			
 
 			// use transparency yes/no (yes is default)
 			useTransparencyCheckBox.Checked = (parentFormSettings.useTransparency == 1) ? true : false;
@@ -275,8 +274,7 @@ namespace PerPixelAlphaForm
 			videoSourcePlayer1.Start();
 
 			//set Crop Settings on alphaForm
-			alphaForm.CropH = cropHCheckBox.Checked;
-			alphaForm.CropV = cropVCheckBox.Checked;
+			alphaForm.CropAuto = cropAutoCheckBox.Checked;
 			//update target size and activate crop
 			alphaForm.SetTargetFrameSizeAndCrop(frameSize);
 
@@ -399,20 +397,14 @@ namespace PerPixelAlphaForm
 			parentFormSettings.flipH = checkBox.Checked ? 1 : 0;
 		}
 
-        private void cropHCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void cropAutoCheckBox_CheckedChanged(object sender, EventArgs e)
         {
 			CheckBox checkBox = (CheckBox)sender;
 
 			//save use of crop horizontal flag
-			parentFormSettings.cropH = checkBox.Checked ? 1 : 0;
+			parentFormSettings.cropAuto = checkBox.Checked ? 1 : 0;
 		}
 
-        private void cropVCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-			CheckBox checkBox = (CheckBox)sender;
 
-			//save use of crop horizontal flag
-			parentFormSettings.cropV = checkBox.Checked ? 1 : 0;
-		}
     }
 }
