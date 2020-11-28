@@ -232,10 +232,9 @@ class VcdPerPixelAlphaForm : Form
 	public void SetTargetFrameSizeAndCrop (Size frameSize)
     {
 		this.frameSize = frameSize;
-
 		cropHPixelOffset = 0;
 		cropVPixelOffset = 0;
-		
+
 		updateFilters();
 	}
 

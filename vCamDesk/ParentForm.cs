@@ -329,21 +329,6 @@ namespace PerPixelAlphaForm
 		// On "Stop" button click
 		private void stopButton_Click(object sender, EventArgs e)
 		{
-#if !RELEASE
-			try
-			{
-				if (sourceBitmap != null)
-				{
-					sourceBitmap.Save("vCamDesk-snapshot.png");
-				}
-			}
-			catch (Exception ex)
-			{
-
-				//ignore it (EVIL!)
-				Console.WriteLine(ex.Message);
-			}
-#endif
 
 			StopCameras();
 
