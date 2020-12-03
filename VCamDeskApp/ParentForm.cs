@@ -31,12 +31,7 @@ using AForge.Video;
 using AForge.Video.DirectShow;
 using nucs.JsonSettings;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace VCamDeskApp

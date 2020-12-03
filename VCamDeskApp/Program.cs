@@ -25,14 +25,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using AForge.Controls;
-using AForge.Video;
-using AForge.Video.DirectShow;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using nucs.JsonSettings;
-using AForge.Imaging.Filters;
 
 
 namespace VCamDeskApp
@@ -71,33 +67,6 @@ namespace VCamDeskApp
 			this.ResumeLayout(false);
 
 		}
-
-		/*
-		// Let Windows drag this form for us
-		[System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
-		protected override void WndProc(ref Message m)
-		{
-			int rightMBdown = Win32.GetKeyState(Win32.VirtualKeyStates.VK_RBUTTON) >> 8; // if right mouse button pressed, then value -1 in high byte
-			//high five to https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getkeystate
-
-			if (m.Msg == 0x0084 ) {  //WM_NCHITTEST
-				if (parentForm != null)
-				{
-					//switch (MouseButtons)
-					if (rightMBdown!=0){
-						//Console.WriteLine("Right Click detected, bye!");
-						parentForm.Invoke(parentForm.quitProgramDelegate);
-					}
-
-				}
-
-				m.Result= (IntPtr)2;	// HTCLIENT
-				return;
-			}
-			base.WndProc(ref m);
-		}
-
-	*/
 
 
 	}

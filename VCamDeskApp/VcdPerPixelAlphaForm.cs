@@ -27,10 +27,8 @@ SOFTWARE.
 
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-using System.Drawing.Drawing2D;
 using AForge.Imaging.Filters;
 
 
@@ -182,12 +180,12 @@ namespace VCamDeskApp
 		private void InitializeComponent()
 		{
 			this.SuspendLayout();
-			FormBorderStyle = FormBorderStyle.None;
-
+			//FormBorderStyle = FormBorderStyle.None;
+			FormBorderStyle = FormBorderStyle.SizableToolWindow;
 			this.ResumeLayout(false);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.VcdPerPixelAlphaForm_KeyDown);
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.VcdPerPixelAlphaForm_MouseDown);
-
+			this.Resize += new System.EventHandler(this.VcdPerPixelAlphaForm_Resize);
 		}
 
 		public void setParentForm(ParentForm parentForm)
@@ -464,6 +462,14 @@ namespace VCamDeskApp
 					parentForm.Invoke(parentForm.quitProgramDelegate);
 					break;
 			}
+		}
+
+		private void VcdPerPixelAlphaForm_Resize(object sender, EventArgs e)
+		{
+			//todo: using aspect ratio to prevent stretching
+			frameSize.Width = this.Width;
+			frameSize.Height = this.Height;
+			updateFilters();
 		}
 
 	}
