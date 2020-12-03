@@ -1,4 +1,4 @@
-﻿namespace PerPixelAlphaForm
+﻿namespace VCamDeskApp
 {
     partial class ParentForm
     {

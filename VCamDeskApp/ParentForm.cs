@@ -39,9 +39,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace PerPixelAlphaForm
+namespace VCamDeskApp
 {
-    public partial class ParentForm : Form
+	public partial class ParentForm : Form
     {
         public ParentForm()
         {
