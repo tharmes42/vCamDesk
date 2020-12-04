@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 using AForge.Imaging.Filters;
 
 
-
+ 
 namespace VCamDeskApp
 {
 	// class that exposes needed win32 gdi functions.
@@ -467,6 +467,7 @@ namespace VCamDeskApp
 		private void VcdPerPixelAlphaForm_Resize(object sender, EventArgs e)
 		{
 			//todo: using aspect ratio to prevent stretching
+			//
 			frameSize.Width = this.Width;
 			frameSize.Height = this.Height;
 			updateFilters();
