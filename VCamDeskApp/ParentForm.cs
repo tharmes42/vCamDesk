@@ -43,6 +43,9 @@ namespace VCamDeskApp
 
 			InitializeComponent();
 			InitializeAdditionalComponents();
+			//UpdateCheck.UpdateCheckAsync(this).GetAwaiter().GetResult(); //blocking
+			_ = UpdateCheck.UpdateCheckAsync(this); //non-blocking using discard variable
+
 
 		}
 
@@ -107,7 +110,9 @@ namespace VCamDeskApp
 
 			//InitializeComponent();
 
+			//initalize delegates
 			quitProgramDelegate = new QuitProgramDelegate(QuitProgramMethod);
+			showUpdateAvailableDelegate = new ShowUpdateAvailableDelegate(ShowUpdateAvailableMethod);
 
 
 			// show device list
@@ -292,6 +297,11 @@ namespace VCamDeskApp
 			stopButton_Click(this, null);
 		}
 
+		//delegate method to be invoked from outside
+		public void ShowUpdateAvailableMethod()
+		{
+			linkLabelUpdateAvailable.Visible = true;
+		}
 
 		public static System.Drawing.Bitmap ReplaceTransparency(System.Drawing.Bitmap bitmap, System.Drawing.Color background)
 		{
@@ -316,10 +326,15 @@ namespace VCamDeskApp
 		private bool useTransparency; // use transparency yes/no
 		FilterInfoCollection videoDevices; // list of video devices
 
+		// allows to signal main form to close program
+		// see QuitProgramMethod()
 		public delegate void QuitProgramDelegate();
 		public QuitProgramDelegate quitProgramDelegate;
 
-
+		// allows to signal main form to show update message
+		// see ShowUpdateAvailableMethod()
+		public delegate void ShowUpdateAvailableDelegate();
+		public ShowUpdateAvailableDelegate showUpdateAvailableDelegate;
 
 		// On "Stop" button click
 		private void stopButton_Click(object sender, EventArgs e)
@@ -385,6 +400,10 @@ namespace VCamDeskApp
 			parentFormSettings.cropAuto = checkBox.Checked ? 1 : 0;
 		}
 
+        private void linkLabelUpdateAvailable_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+			System.Diagnostics.Process.Start("https://github.com/tharmes42/vCamDesk/releases/latest");
 
+		}
     }
 }

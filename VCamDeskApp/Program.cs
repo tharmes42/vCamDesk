@@ -115,6 +115,7 @@ namespace VCamDeskApp
 		{
 			//Application.Run(new OldParentForm());
 			Application.Run(new ParentForm());
+
 		}
 	}
 
