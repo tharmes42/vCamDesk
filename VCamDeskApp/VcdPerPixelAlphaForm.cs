@@ -30,9 +30,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using AForge.Imaging.Filters;
+using AForge.Vision.Motion;
 
-
- 
 namespace VCamDeskApp
 {
 	// class that exposes needed win32 gdi functions.
@@ -155,11 +154,14 @@ namespace VCamDeskApp
 		protected Size sourceFrameSize;
 		private ResizeNearestNeighbor resizeFilter; //used to resize the image, based on target image size
 		private Crop cropFilter; //used to crop the image, based on source image size
-		int cropHPixelOffset = 0;
-		int cropVPixelOffset = 0;
+		//int cropRect.Y = 0;
+		//int cropRect.X = 0;
+		Rectangle cropRect;
 
 
-		public bool CropAuto { get; set; } = false;  //crop the image automatically
+
+
+	public bool CropAuto { get; set; } = false;  //crop the image automatically
 
 
 
@@ -174,7 +176,7 @@ namespace VCamDeskApp
 
 			SetTargetFrameSizeAndCrop(new Size(320, 200));
 			myDelegate = new UpdateBitmap(UpdateBitmapMethod);
-
+			//autoZoom = new AutoZoom();
 		}
 
 		private void InitializeComponent()
@@ -232,8 +234,17 @@ namespace VCamDeskApp
 		public void SetTargetFrameSizeAndCrop(Size frameSize)
 		{
 			this.frameSize = frameSize;
-			cropHPixelOffset = 0;
-			cropVPixelOffset = 0;
+			cropRect = new Rectangle(new Point(0, 0), sourceFrameSize); //no initial crop
+			updateFilters();
+		}
+
+		/// <summary>
+		/// Change target framesize to resize to and update crop information
+		/// </summary>
+		/// <param name="borderRect"></param>
+		public void SetSourceFrameSizeAndCrop(Rectangle cropRect)
+		{
+			this.cropRect = cropRect;
 
 			updateFilters();
 		}
@@ -244,7 +255,8 @@ namespace VCamDeskApp
 		private void updateFilters()
 		{
 
-			cropFilter = new Crop(new Rectangle(cropVPixelOffset, cropHPixelOffset, sourceFrameSize.Width - (2 * cropVPixelOffset), sourceFrameSize.Height - (2 * cropHPixelOffset)));
+			//cropFilter = new Crop(new Rectangle(cropRect.X, cropRect.Y, sourceFrameSize.Width - (2 * cropRect.X), sourceFrameSize.Height - (2 * cropRect.Y)));
+			cropFilter = new Crop(cropRect);
 			resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
 
 
@@ -284,10 +296,10 @@ namespace VCamDeskApp
 		{
 			int aspectRatio = (int)(frameSize.Width / frameSize.Height);
 
-			if (cropHPixelOffset < ((int)((float)frameSize.Height / 3)))
+			if (cropRect.Y < ((int)((float)frameSize.Height / 3)))
 			{
-				cropHPixelOffset = cropHPixelOffset + (int)((float)frameSize.Height * 0.1);
-				cropVPixelOffset = cropVPixelOffset + (int)((float)frameSize.Width * 0.1);
+				cropRect.Y = cropRect.Y + (int)((float)frameSize.Height * 0.1);
+				cropRect.X = cropRect.X + (int)((float)frameSize.Width * 0.1);
 
 				updateFilters();
 			}
@@ -298,14 +310,14 @@ namespace VCamDeskApp
 		/// </summary>
 		public void CropLess()
 		{
-			cropHPixelOffset = cropHPixelOffset - (int)((float)frameSize.Height * 0.1);
-			cropVPixelOffset = cropVPixelOffset - (int)((float)frameSize.Width * 0.1);
+			cropRect.Y = cropRect.Y - (int)((float)frameSize.Height * 0.1);
+			cropRect.X = cropRect.X - (int)((float)frameSize.Width * 0.1);
 
 			//you can and should not negative crop :)
-			if (cropHPixelOffset < 0 || cropVPixelOffset < 0)
+			if (cropRect.Y < 0 || cropRect.X < 0)
 			{
-				cropHPixelOffset = 0;
-				cropVPixelOffset = 0;
+				cropRect.Y = 0;
+				cropRect.X = 0;
 			}
 
 			updateFilters();
@@ -323,11 +335,12 @@ namespace VCamDeskApp
 				//free temp bitmap
 				newImage.Dispose();*/
 
+				
 
-
-
+					//	autoZoom.AutoZoom_NewFrame(ref localCacheBitmap);
+				
 				//if image should be cropped apply filter, otherwise just set it to resized image
-				if (cropHPixelOffset > 0)
+				if (cropRect.Y > 0)
 				{
 					Bitmap croppedImage = cropFilter.Apply(localCacheBitmap);
 					Bitmap resizedImageAfterCrop = resizeFilter.Apply(croppedImage);

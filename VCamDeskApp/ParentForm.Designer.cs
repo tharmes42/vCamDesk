@@ -47,7 +47,7 @@
             // 
             this.camera1Combo.FormattingEnabled = true;
             this.camera1Combo.Location = new System.Drawing.Point(29, 31);
-            this.camera1Combo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.camera1Combo.Margin = new System.Windows.Forms.Padding(4);
             this.camera1Combo.Name = "camera1Combo";
             this.camera1Combo.Size = new System.Drawing.Size(356, 32);
             this.camera1Combo.TabIndex = 0;
@@ -57,7 +57,7 @@
             // 
             this.flipHCheckBox.AutoSize = true;
             this.flipHCheckBox.Location = new System.Drawing.Point(29, 210);
-            this.flipHCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.flipHCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.flipHCheckBox.Name = "flipHCheckBox";
             this.flipHCheckBox.Size = new System.Drawing.Size(161, 29);
             this.flipHCheckBox.TabIndex = 1;
@@ -69,7 +69,7 @@
             // 
             this.useTransparencyCheckBox.AutoSize = true;
             this.useTransparencyCheckBox.Location = new System.Drawing.Point(29, 258);
-            this.useTransparencyCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.useTransparencyCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.useTransparencyCheckBox.Name = "useTransparencyCheckBox";
             this.useTransparencyCheckBox.Size = new System.Drawing.Size(438, 29);
             this.useTransparencyCheckBox.TabIndex = 2;
@@ -80,7 +80,7 @@
             // startButton
             // 
             this.startButton.Location = new System.Drawing.Point(29, 107);
-            this.startButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.startButton.Margin = new System.Windows.Forms.Padding(4);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(200, 68);
             this.startButton.TabIndex = 5;
@@ -91,7 +91,7 @@
             // stopButton
             // 
             this.stopButton.Location = new System.Drawing.Point(295, 107);
-            this.stopButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.stopButton.Margin = new System.Windows.Forms.Padding(4);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(202, 68);
             this.stopButton.TabIndex = 6;
@@ -166,13 +166,12 @@
             // 
             this.cropAutoCheckBox.AutoSize = true;
             this.cropAutoCheckBox.Location = new System.Drawing.Point(295, 210);
-            this.cropAutoCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cropAutoCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.cropAutoCheckBox.Name = "cropAutoCheckBox";
             this.cropAutoCheckBox.Size = new System.Drawing.Size(254, 29);
             this.cropAutoCheckBox.TabIndex = 3;
             this.cropAutoCheckBox.Text = "Auto-crop (experimental)";
             this.cropAutoCheckBox.UseVisualStyleBackColor = true;
-            this.cropAutoCheckBox.Visible = false;
             this.cropAutoCheckBox.CheckedChanged += new System.EventHandler(this.cropAutoCheckBox_CheckedChanged);
             // 
             // linkLabelUpdateAvailable
@@ -206,7 +205,7 @@
             this.Controls.Add(this.flipHCheckBox);
             this.Controls.Add(this.camera1Combo);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ParentForm";

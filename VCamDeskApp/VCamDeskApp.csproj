@@ -136,6 +136,9 @@
     <PackageReference Include="AForge.Video.DirectShow">
       <Version>2.2.5</Version>
     </PackageReference>
+    <PackageReference Include="AForge.Vision">
+      <Version>2.2.5</Version>
+    </PackageReference>
     <PackageReference Include="ILMerge">
       <Version>3.0.41</Version>
     </PackageReference>

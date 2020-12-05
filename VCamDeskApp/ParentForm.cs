@@ -29,6 +29,7 @@ SOFTWARE.
 using AForge.Controls;
 using AForge.Video;
 using AForge.Video.DirectShow;
+using AForge.Vision.Motion;
 using nucs.JsonSettings;
 using System;
 using System.Drawing;
@@ -45,7 +46,6 @@ namespace VCamDeskApp
 			InitializeAdditionalComponents();
 			//UpdateCheck.UpdateCheckAsync(this).GetAwaiter().GetResult(); //blocking
 			_ = UpdateCheck.UpdateCheckAsync(this); //non-blocking using discard variable
-
 
 		}
 
@@ -150,15 +150,67 @@ namespace VCamDeskApp
 		}//initializeComponents2
 
 		//on new frame update alphaForm via delegate 
-		private void videoSourcePlayer1_NewFrame(object sender, ref Bitmap image)
+		private void videoSourcePlayer1_NewFrame(object sender, ref Bitmap sourceBitmap)
 		{
 			//get frame from running webcam
-			sourceBitmap = videoSourcePlayer1.GetCurrentVideoFrame();
+			//sourceBitmap = videoSourcePlayer1.GetCurrentVideoFrame();
+
 			if (sourceBitmap != null)
 			{
 
 				try
 				{
+					lock (this)
+					{
+						if (cropAutoCheckBox.Checked && (detector != null))
+						{
+							float motionLevel = detector.ProcessFrame(sourceBitmap);
+							string drawString = "motionLevel= " + motionLevel.ToString("F6") + 
+								"\nX/Y:" + borderRect.X.ToString() + "/" + borderRect.Y.ToString() + 
+							    "\nW/H:" + borderRect.Width.ToString() + "/" + borderRect.Height.ToString();
+							//TODO: fix aspect ration, sometimes I am slim :)
+							Font drawFont = new Font("Arial", 24);
+							SolidBrush drawBrush = new SolidBrush(Color.White);
+							Pen drawPen = new Pen(drawBrush, 4);
+							Graphics g = Graphics.FromImage(sourceBitmap);
+							//for debug show stats
+							//g.DrawString(drawString, drawFont, drawBrush, borderRect.Location);
+							if (motionLevel > motionAlarmLevel)
+							{
+								//stop here
+								//Console.WriteLine("ping");
+								// check objects' count
+								if (detector.MotionProcessingAlgorithm is BlobCountingObjectsProcessing)
+								{
+									BlobCountingObjectsProcessing countingDetector = (BlobCountingObjectsProcessing)detector.MotionProcessingAlgorithm;
+									int detectedObjectsCount = countingDetector.ObjectsCount;
+									if (detectedObjectsCount > 0)
+                                    {
+										for (int i =0; i<detectedObjectsCount; i++)
+                                        {
+											Rectangle rect = countingDetector.ObjectRectangles[i];
+											int newMinX = Math.Min(borderRect.X, rect.X);
+											borderRect.Width = borderRect.Width + (borderRect.X - newMinX); //if x is reduced, we need to restore the width
+											borderRect.X = newMinX;
+											borderRect.Width = Math.Max(borderRect.Right, rect.Right)- borderRect.X;
+											
+											int newMinY = Math.Min(borderRect.Y, rect.Y);
+											borderRect.Height = borderRect.Height + (borderRect.Y - newMinY); //if y is incremented, we need to restore the height
+											borderRect.Y = newMinY;
+											borderRect.Height = Math.Max(borderRect.Bottom, rect.Bottom) - borderRect.Y;
+
+										}
+
+									}
+								}
+							
+							}
+							//for debug show crop border
+							//g.DrawRectangle(drawPen, borderRect);
+							alphaForm.SetSourceFrameSizeAndCrop(borderRect);
+
+						}
+					}//lock
 					if (useTransparency)
 					{
 						//make transparent to get alpha channel information
@@ -176,8 +228,8 @@ namespace VCamDeskApp
 								//disable transparency feature since source has no transparent borders to avoid flickering
 								useTransparency = false;
 								//reduce the framesize again, since transparency is not used
-								frameSize.Width = (int)(frameSize.Width / 1.2);
-								frameSize.Height = (int)(frameSize.Width / aspectRatio);
+								//frameSize.Width = (int)(frameSize.Width / 1.2);
+								//frameSize.Height = (int)(frameSize.Width / aspectRatio);
 								alphaForm.SetTargetFrameSizeAndCrop(frameSize);
 
 							}
@@ -254,21 +306,10 @@ namespace VCamDeskApp
 			{
 				videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex]; //It selects the default size
 				resolutionLabel.Text = videoSource1.VideoCapabilities[resolutionIndex].FrameSize.ToString();
+				borderRect = new Rectangle(100, 100,(int)(frameSize.Width / 2), (int)(frameSize.Height / 2));
 				aspectRatio = (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Width / (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Height;
 				frameSize.Height = (int)(frameSize.Width / aspectRatio);
 
-
-				/*		for (int i = 0; i < videoSource1.VideoCapabilities.Length; i++)
-						{
-							string resolution = "Resolution Number " + Convert.ToString(i);
-							string resolution_size = videoSource1.VideoCapabilities[i].FrameSize.ToString();
-							Console.WriteLine("resolution , resolution_size>> " + resolution + "" + resolution_size);
-						}
-						resolutionIndex = 6;
-						videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex];
-						float aspectRatio = (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Height / (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Width;
-						alphaFormHeight = (int)(alphaFormWidth * aspectRatio);
-				*/
 			}
 			videoSourcePlayer1.VideoSource = videoSource1;
 			videoSourcePlayer1.Start();
@@ -320,7 +361,6 @@ namespace VCamDeskApp
 		private VideoSourcePlayer videoSourcePlayer1; // Video Source Player
 		private VideoCaptureDevice videoSource1; // selected video source
 		private AlphaForm alphaForm;    // form to display videofeed with alpha transparency
-		private Bitmap sourceBitmap; // bitmap froum video source player
 		private Size frameSize; // target size of frame
 		private float aspectRatio; // aspectRation auf frame
 		private bool useTransparency; // use transparency yes/no
@@ -335,6 +375,14 @@ namespace VCamDeskApp
 		// see ShowUpdateAvailableMethod()
 		public delegate void ShowUpdateAvailableDelegate();
 		public ShowUpdateAvailableDelegate showUpdateAvailableDelegate;
+
+		/*MotionDetector detector = new MotionDetector(
+			new TwoFramesDifferenceDetector(),
+			new MotionAreaHighlighting());*/
+		MotionDetector detector = new MotionDetector(new SimpleBackgroundModelingDetector(true, true),
+                new BlobCountingObjectsProcessing(50,50,false));
+		Rectangle borderRect;
+		private float motionAlarmLevel = 0.015f;
 
 		// On "Stop" button click
 		private void stopButton_Click(object sender, EventArgs e)
