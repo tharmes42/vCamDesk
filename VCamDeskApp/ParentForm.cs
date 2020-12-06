@@ -87,7 +87,7 @@ namespace VCamDeskApp
 
 
 			// alphaForm will contain the per-pixel-alpha dib
-			alphaForm = new AlphaForm();
+			vcdPerPixelAlphaForm = new VcdPerPixelAlphaForm();
 			// place alphaForm to the last position, if it is not out of screen dimension
 			var myScreen = Screen.FromControl(this);
 			if (((parentFormSettings.framePositionX + parentFormSettings.frameSizeWidth) > myScreen.Bounds.Width) ||
@@ -97,10 +97,10 @@ namespace VCamDeskApp
 				parentFormSettings.framePositionX = 100;
 				parentFormSettings.framePositionY = 100;
 			}
-			alphaForm.SetDesktopLocation(parentFormSettings.framePositionX, parentFormSettings.framePositionY);
-			alphaForm.SetTargetFrameSizeAndCrop(frameSize);
-			alphaForm.setParentForm(this);
-			alphaForm.Show();
+			//vcdPerPixelAlphaForm.SetDesktopLocation(parentFormSettings.framePositionX, parentFormSettings.framePositionY);
+			//vcdPerPixelAlphaForm.SetTargetFrameSizeAndCrop(frameSize);
+			vcdPerPixelAlphaForm.setParentForm(this);
+			vcdPerPixelAlphaForm.Show();
 
 
 			frameSize = new Size(parentFormSettings.frameSizeWidth, parentFormSettings.frameSizeHeight);
@@ -207,7 +207,7 @@ namespace VCamDeskApp
 							}
 							//for debug show crop border
 							//g.DrawRectangle(drawPen, borderRect);
-							alphaForm.SetSourceFrameSizeAndCrop(borderRect);
+							vcdPerPixelAlphaForm.SetSourceFrameSizeAndCrop(borderRect);
 
 						}
 					}//lock
@@ -230,7 +230,7 @@ namespace VCamDeskApp
 								//reduce the framesize again, since transparency is not used
 								//frameSize.Width = (int)(frameSize.Width / 1.2);
 								//frameSize.Height = (int)(frameSize.Width / aspectRatio);
-								alphaForm.SetTargetFrameSizeAndCrop(frameSize);
+								vcdPerPixelAlphaForm.SetTargetFrameSizeAndCrop(frameSize);
 
 							}
 							else
@@ -256,9 +256,9 @@ namespace VCamDeskApp
 						//localCacheBitmap = ReplaceTransparency(sourceBitmap, System.Drawing.Color.White);
 						//sourceBitmap = localCacheBitmap;					
 					}
-					alphaForm.SetBitmap(sourceBitmap);
+					vcdPerPixelAlphaForm.SetBitmap(sourceBitmap);
 					//ping alphaForm to update bitmap
-					alphaForm.Invoke(alphaForm.myDelegate);
+					vcdPerPixelAlphaForm.Invoke(vcdPerPixelAlphaForm.myDelegate);
 				}
 				catch (Exception e)
 				{
@@ -316,7 +316,7 @@ namespace VCamDeskApp
 			videoSourcePlayer1.Start();
 
 			//update target size and activate crop
-			alphaForm.SetTargetFrameSizeAndCrop(frameSize);
+			vcdPerPixelAlphaForm.SetTargetFrameSizeAndCrop(frameSize);
 
 		}
 
@@ -331,9 +331,9 @@ namespace VCamDeskApp
 		public void QuitProgramMethod()
 		{
 			this.Show();
-			parentFormSettings.framePositionX = alphaForm.DesktopLocation.X;
-			parentFormSettings.framePositionY = alphaForm.DesktopLocation.Y;
-			alphaForm.Hide();
+			parentFormSettings.framePositionX = vcdPerPixelAlphaForm.DesktopLocation.X;
+			parentFormSettings.framePositionY = vcdPerPixelAlphaForm.DesktopLocation.Y;
+			vcdPerPixelAlphaForm.Hide();
 			stopButton_Click(this, null);
 		}
 
@@ -359,7 +359,7 @@ namespace VCamDeskApp
 		private int noTransparencyCounter; // every frame without transparency is counted, if limit of successively frames is exceeded turn of tranparency feature
 		private VideoSourcePlayer videoSourcePlayer1; // Video Source Player
 		private VideoCaptureDevice videoSource1; // selected video source
-		private AlphaForm alphaForm;    // form to display videofeed with alpha transparency
+		private VcdPerPixelAlphaForm vcdPerPixelAlphaForm;    // form to display videofeed with alpha transparency
 		private Size frameSize; // target size of frame
 		private Size sourceFrameSize; // source size of frame
 		private float aspectRatio; // aspectRation auf frame

@@ -169,20 +169,47 @@ namespace VCamDeskApp
 			//this.StartPosition = FormStartPosition.Manual;
 
 
-			SetTargetFrameSizeAndCrop(new Size(320, 200));
+			//SetTargetFrameSizeAndCrop(new Size(320, 200));
 			myDelegate = new UpdateBitmap(UpdateBitmapMethod);
 			//autoZoom = new AutoZoom();
+
+
+			Bitmap startBmp = new Bitmap(1, 1);
+			using (Graphics gfx = Graphics.FromImage(startBmp))
+			using (SolidBrush brush = new SolidBrush(Color.FromArgb(128, 0, 0, 0)))
+			{
+				gfx.FillRectangle(brush, 0, 0, this.frameSize.Width, this.frameSize.Height);
+			}
+			SetBitmap(startBmp);
+			UpdateFilters();
+			UpdateBitmapMethod();
+
+			/*this.StartPosition = FormStartPosition.Manual;
+			foreach (var scrn in Screen.AllScreens)
+			{
+				if (scrn.Bounds.Contains(this.Location))
+				{
+					this.Location = new Point(scrn.Bounds.Left, scrn.Bounds.Top);
+					return;
+				}
+			}
+			*/
+
 		}
 
 		private void InitializeComponent()
 		{
 			this.SuspendLayout();
 			//FormBorderStyle = FormBorderStyle.None;
+			this.TopMost = true;
+			this.ShowInTaskbar = false;
 			FormBorderStyle = FormBorderStyle.SizableToolWindow;
+			this.Size = new Size(0, 0);
 			this.ResumeLayout(false);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.VcdPerPixelAlphaForm_KeyDown);
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.VcdPerPixelAlphaForm_MouseDown);
 			this.Resize += new System.EventHandler(this.VcdPerPixelAlphaForm_Resize);
+
 		}
 
 		public void setParentForm(ParentForm parentForm)
@@ -230,7 +257,7 @@ namespace VCamDeskApp
 		{
 			this.frameSize = frameSize;
 			cropRect = new Rectangle(new Point(0, 0), sourceFrameSize); //no initial crop
-			updateFilters();
+			UpdateFilters();
 		}
 
 		/// <summary>
@@ -274,13 +301,13 @@ namespace VCamDeskApp
 				}
 			}
 			
-			updateFilters();
+			UpdateFilters();
 		}
 
 		/// <summary>
 		/// create and update filters for resize and crop
 		/// </summary>
-		private void updateFilters()
+		private void UpdateFilters()
 		{
 
 			//cropFilter = new Crop(new Rectangle(cropRect.X, cropRect.Y, sourceFrameSize.Width - (2 * cropRect.X), sourceFrameSize.Height - (2 * cropRect.Y)));
@@ -297,7 +324,7 @@ namespace VCamDeskApp
 			frameSize.Width = (int)(frameSize.Width * 1.1);
 			frameSize.Height = (int)(frameSize.Height * 1.1);
 
-			updateFilters();
+			UpdateFilters();
 
 		}
 
@@ -311,7 +338,7 @@ namespace VCamDeskApp
 				frameSize.Width = (int)(frameSize.Width / 1.1);
 				frameSize.Height = (int)(frameSize.Height / 1.1);
 
-				updateFilters();
+				UpdateFilters();
 			}
 		}
 
@@ -329,7 +356,7 @@ namespace VCamDeskApp
 				cropRect.Y = cropRect.Y + (int)((float)sourceFrameSize.Height * 0.1);
 				cropRect.X = cropRect.X + (int)((float)sourceFrameSize.Width * 0.1);
 
-				updateFilters();
+				UpdateFilters();
 			}
 		}
 
@@ -349,7 +376,7 @@ namespace VCamDeskApp
 				cropRect.X = 0;
 			}
 
-			updateFilters();
+			UpdateFilters();
 		}
 
 
@@ -501,15 +528,23 @@ namespace VCamDeskApp
 			}
 		}
 
+
+		/// <summary>
+		/// on resize event (also see WndProc override)
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void VcdPerPixelAlphaForm_Resize(object sender, EventArgs e)
 		{
-			//todo: using aspect ratio to prevent stretching
-			//
 			frameSize.Width = this.Width;
 			frameSize.Height = this.Height;
-			updateFilters();
+			UpdateFilters();
 		}
 
+		/// <summary>
+		/// override on resize to be able to maintain aspect ratio
+		/// </summary>
+		/// <param name="m"></param>
 		protected override void WndProc(ref Message m)
 		{
 			if ( m.Msg == 0x214) 

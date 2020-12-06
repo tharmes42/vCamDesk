@@ -33,44 +33,7 @@ using nucs.JsonSettings;
 
 namespace VCamDeskApp
 {
-	/// <para>Our test form for this sample application.  The bitmap will be displayed in this window.</para>
-	class AlphaForm : VcdPerPixelAlphaForm
-	{
-		public AlphaForm()
-		{
-			InitializeComponent();
 
-			Bitmap startBmp = new Bitmap(150, 100);
-			using (Graphics gfx = Graphics.FromImage(startBmp))
-			using (SolidBrush brush = new SolidBrush(Color.FromArgb(128, 0, 0, 0)))
-			{
-				gfx.FillRectangle(brush, 0, 0, this.frameSize.Width, this.frameSize.Height);
-			}
-			this.SetBitmap(startBmp);
-			this.UpdateBitmapMethod();
-			this.StartPosition = FormStartPosition.Manual;
-			foreach (var scrn in Screen.AllScreens)
-			{
-				if (scrn.Bounds.Contains(this.Location))
-				{
-					this.Location = new Point(scrn.Bounds.Left, scrn.Bounds.Top);
-					return;
-				}
-			}
-		}
-
-		private void InitializeComponent()
-		{
-			this.SuspendLayout();
-			this.TopMost = true;
-			this.ShowInTaskbar = false;
-			this.ResumeLayout(false);
-
-
-		}
-
-
-	}
 
 	//
 	// Load default application setting from a JSON file in the same directory
@@ -101,9 +64,6 @@ namespace VCamDeskApp
 		public FormSettings() { }
 		public FormSettings(string fileName) : base(fileName) { }
 	}
-
-
-
 
 
 	static class Program
