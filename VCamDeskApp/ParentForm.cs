@@ -33,6 +33,7 @@ using AForge.Vision.Motion;
 using nucs.JsonSettings;
 using System;
 using System.Drawing;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace VCamDeskApp
@@ -44,6 +45,11 @@ namespace VCamDeskApp
 
 			InitializeComponent();
 			InitializeAdditionalComponents();
+
+			System.Windows.Forms.Screen oScreen = System.Windows.Forms.Screen.PrimaryScreen;
+			this.StartPosition = FormStartPosition.Manual;
+			this.Location = oScreen.Bounds.Location;
+
 			//UpdateCheck.UpdateCheckAsync(this).GetAwaiter().GetResult(); //blocking
 			_ = UpdateCheck.UpdateCheckAsync(this); //non-blocking using discard variable
 
@@ -165,16 +171,23 @@ namespace VCamDeskApp
 						if (cropAutoCheckBox.Checked && (detector != null))
 						{
 							float motionLevel = detector.ProcessFrame(sourceBitmap);
-							string drawString = "motionLevel= " + motionLevel.ToString("F6") + 
-								"\nX/Y:" + borderRect.X.ToString() + "/" + borderRect.Y.ToString() + 
-							    "\nW/H:" + borderRect.Width.ToString() + "/" + borderRect.Height.ToString();
-							//TODO: fix aspect ration, sometimes I am slim :)
-							Font drawFont = new Font("Arial", 24);
+							Font drawFont = new Font("Arial", 14);
 							SolidBrush drawBrush = new SolidBrush(Color.White);
 							Pen drawPen = new Pen(drawBrush, 4);
-							Graphics g = Graphics.FromImage(sourceBitmap);
+
 							//for debug show stats
+							/*string drawString = "motionLevel= " + motionLevel.ToString("F6") +
+								"\nX/Y:" + borderRect.X.ToString() + "/" + borderRect.Y.ToString() +
+								"\nW/H:" + borderRect.Width.ToString() + "/" + borderRect.Height.ToString();
+							*/
+							//Graphics g = Graphics.FromImage(sourceBitmap);
 							//g.DrawString(drawString, drawFont, drawBrush, borderRect.Location);
+
+							if (showNotification) { 
+								string notificationString = "Move around to adjust zoom :)";
+								Graphics g = Graphics.FromImage(sourceBitmap);
+								g.DrawString(notificationString, drawFont, drawBrush, borderRect.Location);
+							}
 							if (motionLevel > motionAlarmLevel)
 							{
 								//stop here
@@ -280,7 +293,10 @@ namespace VCamDeskApp
 
 		}
 
-		// Start cameras
+
+		/// <summary>
+		/// Start cameras
+		/// </summary>
 		private void StartCameras()
 		{
 			//default index is 0
@@ -320,14 +336,18 @@ namespace VCamDeskApp
 
 		}
 
-		// Stop cameras
+		/// <summary>
+		/// Stop cameras
+		/// </summary>
 		private void StopCameras()
 		{
 			videoSourcePlayer1.SignalToStop();
 			//videoSourcePlayer1.WaitForStop();
 		}
 
-		//delegate method to be invoked from outside
+		/// <summary>
+		/// quit program, delegate method to be invoked from outside
+		/// </summary>
 		public void QuitProgramMethod()
 		{
 			this.Show();
@@ -337,7 +357,9 @@ namespace VCamDeskApp
 			stopButton_Click(this, null);
 		}
 
-		//delegate method to be invoked from outside
+		/// <summary>
+		/// makes "Update available" link visible, delegate method to be invoked from outside
+		/// </summary>
 		public void ShowUpdateAvailableMethod()
 		{
 			linkLabelUpdateAvailable.Visible = true;
@@ -384,6 +406,26 @@ namespace VCamDeskApp
 		Rectangle borderRect;
 		private float motionAlarmLevel = 0.015f;
 
+		private System.Timers.Timer notificationTimer;
+		bool showNotification = false;
+		int countdown = 5;
+
+
+
+		/// <summary>
+		/// Timer event to toggle showNotification to allow blinking of a notification message
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="e"></param>
+		private void OnTimedEvent(Object source, ElapsedEventArgs e)
+		{
+			
+			showNotification = (countdown % 2 == 1);
+			countdown--;
+			if (countdown < 0) notificationTimer.Stop();
+			//Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}",  e.SignalTime);
+		}
+
 		// On "Stop" button click
 		private void stopButton_Click(object sender, EventArgs e)
 		{
@@ -405,6 +447,11 @@ namespace VCamDeskApp
 			StartCameras();
 			startButton.Enabled = false;
 			stopButton.Enabled = true;
+			notificationTimer = new System.Timers.Timer(500);
+			// Hook up the Elapsed event for the timer. 
+			notificationTimer.Elapsed += OnTimedEvent;
+			notificationTimer.AutoReset = true;
+			notificationTimer.Enabled = true;
 			ActiveForm.Hide();
 		}
 
@@ -414,9 +461,13 @@ namespace VCamDeskApp
 			{
 				StopCameras();
 			}
+			if (notificationTimer!=null) { 
+				notificationTimer.Stop();
+				notificationTimer.Dispose();
+			}
 		}
 
-        private void camera1Combo_SelectedIndexChanged(object sender, EventArgs e)
+		private void camera1Combo_SelectedIndexChanged(object sender, EventArgs e)
         {
 			ComboBox comboBox = (ComboBox)sender;
 

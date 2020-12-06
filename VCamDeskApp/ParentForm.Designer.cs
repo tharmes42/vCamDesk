@@ -46,20 +46,20 @@
             // camera1Combo
             // 
             this.camera1Combo.FormattingEnabled = true;
-            this.camera1Combo.Location = new System.Drawing.Point(29, 31);
-            this.camera1Combo.Margin = new System.Windows.Forms.Padding(4);
+            this.camera1Combo.Location = new System.Drawing.Point(16, 17);
+            this.camera1Combo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.camera1Combo.Name = "camera1Combo";
-            this.camera1Combo.Size = new System.Drawing.Size(356, 32);
+            this.camera1Combo.Size = new System.Drawing.Size(196, 21);
             this.camera1Combo.TabIndex = 0;
             this.camera1Combo.SelectedIndexChanged += new System.EventHandler(this.camera1Combo_SelectedIndexChanged);
             // 
             // flipHCheckBox
             // 
             this.flipHCheckBox.AutoSize = true;
-            this.flipHCheckBox.Location = new System.Drawing.Point(29, 210);
-            this.flipHCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.flipHCheckBox.Location = new System.Drawing.Point(16, 114);
+            this.flipHCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.flipHCheckBox.Name = "flipHCheckBox";
-            this.flipHCheckBox.Size = new System.Drawing.Size(161, 29);
+            this.flipHCheckBox.Size = new System.Drawing.Size(92, 17);
             this.flipHCheckBox.TabIndex = 1;
             this.flipHCheckBox.Text = "Flip Horizontal";
             this.flipHCheckBox.UseVisualStyleBackColor = true;
@@ -68,10 +68,10 @@
             // useTransparencyCheckBox
             // 
             this.useTransparencyCheckBox.AutoSize = true;
-            this.useTransparencyCheckBox.Location = new System.Drawing.Point(29, 258);
-            this.useTransparencyCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.useTransparencyCheckBox.Location = new System.Drawing.Point(16, 140);
+            this.useTransparencyCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.useTransparencyCheckBox.Name = "useTransparencyCheckBox";
-            this.useTransparencyCheckBox.Size = new System.Drawing.Size(438, 29);
+            this.useTransparencyCheckBox.Size = new System.Drawing.Size(238, 17);
             this.useTransparencyCheckBox.TabIndex = 2;
             this.useTransparencyCheckBox.Text = "Transparency (needs XSplit or Snap Camera)";
             this.useTransparencyCheckBox.UseVisualStyleBackColor = true;
@@ -79,10 +79,10 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(29, 107);
-            this.startButton.Margin = new System.Windows.Forms.Padding(4);
+            this.startButton.Location = new System.Drawing.Point(16, 58);
+            this.startButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(200, 68);
+            this.startButton.Size = new System.Drawing.Size(109, 37);
             this.startButton.TabIndex = 5;
             this.startButton.Text = "Start Webcam";
             this.startButton.UseVisualStyleBackColor = true;
@@ -90,10 +90,10 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(295, 107);
-            this.stopButton.Margin = new System.Windows.Forms.Padding(4);
+            this.stopButton.Location = new System.Drawing.Point(161, 58);
+            this.stopButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(202, 68);
+            this.stopButton.Size = new System.Drawing.Size(110, 37);
             this.stopButton.TabIndex = 6;
             this.stopButton.Text = "Quit";
             this.stopButton.UseVisualStyleBackColor = true;
@@ -102,10 +102,10 @@
             // resolutionLabel
             // 
             this.resolutionLabel.AutoSize = true;
-            this.resolutionLabel.Location = new System.Drawing.Point(433, 54);
-            this.resolutionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.resolutionLabel.Location = new System.Drawing.Point(236, 29);
+            this.resolutionLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.resolutionLabel.Name = "resolutionLabel";
-            this.resolutionLabel.Size = new System.Drawing.Size(64, 25);
+            this.resolutionLabel.Size = new System.Drawing.Size(35, 13);
             this.resolutionLabel.TabIndex = 7;
             this.resolutionLabel.Text = "label1";
             this.resolutionLabel.Visible = false;
@@ -114,10 +114,10 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(22, 349);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(12, 189);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(115, 25);
+            this.label1.Size = new System.Drawing.Size(63, 13);
             this.label1.TabIndex = 8;
             this.label1.Text = "+/- to resize";
             // 
@@ -125,50 +125,47 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(24, 312);
-            this.label2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label2.Location = new System.Drawing.Point(13, 169);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(248, 25);
+            this.label2.Size = new System.Drawing.Size(145, 13);
             this.label2.TabIndex = 9;
             this.label2.Text = "Usage in webcam mode:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(266, 349);
-            this.label3.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label3.Location = new System.Drawing.Point(145, 189);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(316, 25);
+            this.label3.Size = new System.Drawing.Size(174, 13);
             this.label3.TabIndex = 10;
             this.label3.Text = "left mouse button to drag and move";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(22, 373);
-            this.label4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label4.Location = new System.Drawing.Point(12, 202);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(183, 25);
+            this.label4.Size = new System.Drawing.Size(103, 13);
             this.label4.TabIndex = 11;
             this.label4.Text = ",/. to zoom and crop";
+            this.label4.Visible = false;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(266, 373);
-            this.label5.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label5.Location = new System.Drawing.Point(145, 202);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(229, 25);
+            this.label5.Size = new System.Drawing.Size(126, 13);
             this.label5.TabIndex = 10;
             this.label5.Text = "right mouse button to quit";
             // 
             // cropAutoCheckBox
             // 
             this.cropAutoCheckBox.AutoSize = true;
-            this.cropAutoCheckBox.Location = new System.Drawing.Point(295, 210);
-            this.cropAutoCheckBox.Margin = new System.Windows.Forms.Padding(4);
+            this.cropAutoCheckBox.Location = new System.Drawing.Point(161, 114);
+            this.cropAutoCheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cropAutoCheckBox.Name = "cropAutoCheckBox";
-            this.cropAutoCheckBox.Size = new System.Drawing.Size(254, 29);
+            this.cropAutoCheckBox.Size = new System.Drawing.Size(140, 17);
             this.cropAutoCheckBox.TabIndex = 3;
             this.cropAutoCheckBox.Text = "Auto-crop (experimental)";
             this.cropAutoCheckBox.UseVisualStyleBackColor = true;
@@ -177,9 +174,10 @@
             // linkLabelUpdateAvailable
             // 
             this.linkLabelUpdateAvailable.AutoSize = true;
-            this.linkLabelUpdateAvailable.Location = new System.Drawing.Point(480, 9);
+            this.linkLabelUpdateAvailable.Location = new System.Drawing.Point(262, 5);
+            this.linkLabelUpdateAvailable.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.linkLabelUpdateAvailable.Name = "linkLabelUpdateAvailable";
-            this.linkLabelUpdateAvailable.Size = new System.Drawing.Size(157, 25);
+            this.linkLabelUpdateAvailable.Size = new System.Drawing.Size(87, 13);
             this.linkLabelUpdateAvailable.TabIndex = 12;
             this.linkLabelUpdateAvailable.TabStop = true;
             this.linkLabelUpdateAvailable.Text = "Update available";
@@ -188,9 +186,9 @@
             // 
             // ParentForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(649, 436);
+            this.ClientSize = new System.Drawing.Size(354, 236);
             this.Controls.Add(this.linkLabelUpdateAvailable);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label5);
@@ -205,7 +203,7 @@
             this.Controls.Add(this.flipHCheckBox);
             this.Controls.Add(this.camera1Combo);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ParentForm";
