@@ -95,15 +95,17 @@ namespace VCamDeskApp
 			// alphaForm will contain the per-pixel-alpha dib
 			vcdPerPixelAlphaForm = new VcdPerPixelAlphaForm();
 			// place alphaForm to the last position, if it is not out of screen dimension
-			var myScreen = Screen.FromControl(this);
-			if (((parentFormSettings.framePositionX + parentFormSettings.frameSizeWidth) > myScreen.Bounds.Width) ||
-				((parentFormSettings.framePositionY + parentFormSettings.frameSizeHeight) > myScreen.Bounds.Height))
+			//var myScreen = Screen.FromControl(this);
+			var myScreen = System.Windows.Forms.Screen.PrimaryScreen;
+			if (!myScreen.Bounds.Contains(new Point(parentFormSettings.framePositionX, parentFormSettings.framePositionY)))
 			{
 				//reset location if it is out of screen
 				parentFormSettings.framePositionX = 100;
 				parentFormSettings.framePositionY = 100;
+			
 			}
-			//vcdPerPixelAlphaForm.SetDesktopLocation(parentFormSettings.framePositionX, parentFormSettings.framePositionY);
+			vcdPerPixelAlphaForm.StartPosition = FormStartPosition.Manual;
+			vcdPerPixelAlphaForm.SetDesktopLocation(parentFormSettings.framePositionX, parentFormSettings.framePositionY);
 			//vcdPerPixelAlphaForm.SetTargetFrameSizeAndCrop(frameSize);
 			vcdPerPixelAlphaForm.setParentForm(this);
 			vcdPerPixelAlphaForm.Show();
