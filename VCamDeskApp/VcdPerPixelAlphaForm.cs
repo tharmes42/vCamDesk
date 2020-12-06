@@ -161,7 +161,7 @@ namespace VCamDeskApp
 
 
 
-	public bool CropAuto { get; set; } = false;  //crop the image automatically
+		public bool CropAuto { get; set; } = false;  //crop the image automatically
 
 
 
@@ -242,10 +242,43 @@ namespace VCamDeskApp
 		/// Change target framesize to resize to and update crop information
 		/// </summary>
 		/// <param name="borderRect"></param>
-		public void SetSourceFrameSizeAndCrop(Rectangle cropRect)
+		public void SetSourceFrameSizeAndCrop(Rectangle borderRect)
 		{
-			this.cropRect = cropRect;
+			cropRect = borderRect;
 
+			//add some space
+			int space = 10;
+			if ((cropRect.X - space) > 0)
+				cropRect.X -= space;
+			if ((cropRect.Y - space) > 0)
+				cropRect.Y -= space;
+			if (cropRect.Right < sourceFrameSize.Width + space)
+				cropRect.Width += space;
+			if (cropRect.Bottom < sourceFrameSize.Height + space)
+				cropRect.Height += space;
+
+			//correct aspect ratio 
+			float sourceAspectRatio = (float)sourceFrameSize.Width / (float)sourceFrameSize.Height;
+			float cropAspectRatio = (float)cropRect.Width / (float)cropRect.Height;
+
+			if (sourceAspectRatio > cropAspectRatio) {
+				cropRect.Height = (int)(cropRect.Width / sourceAspectRatio);
+				if (cropRect.Bottom > sourceFrameSize.Height)
+                {
+					cropRect.Y = 0;
+					cropRect.Height = sourceFrameSize.Height;
+				}
+			}
+			else if (sourceAspectRatio < cropAspectRatio)
+			{
+				cropRect.Width= (int)(cropRect.Height * sourceAspectRatio);
+				if (cropRect.Right > sourceFrameSize.Width)
+				{
+					cropRect.X = 0;
+					cropRect.Width = sourceFrameSize.Width;
+				}
+			}
+			
 			updateFilters();
 		}
 
@@ -258,8 +291,7 @@ namespace VCamDeskApp
 			//cropFilter = new Crop(new Rectangle(cropRect.X, cropRect.Y, sourceFrameSize.Width - (2 * cropRect.X), sourceFrameSize.Height - (2 * cropRect.Y)));
 			cropFilter = new Crop(cropRect);
 			resizeFilter = new ResizeNearestNeighbor(frameSize.Width, frameSize.Height);
-
-
+			
 		}
 
 		/// <summary>
@@ -328,22 +360,13 @@ namespace VCamDeskApp
 		{
 			try
 			{
-				/*// resize image
-				Bitmap newImage = resizeFilter.Apply(localCacheBitmap);
-				//update image
-				updateBitmapMethod(newImage, 255);
-				//free temp bitmap
-				newImage.Dispose();*/
-
-				
-
-					//	autoZoom.AutoZoom_NewFrame(ref localCacheBitmap);
 				
 				//if image should be cropped apply filter, otherwise just set it to resized image
 				if (cropRect.Y > 0)
 				{
 					Bitmap croppedImage = cropFilter.Apply(localCacheBitmap);
 					Bitmap resizedImageAfterCrop = resizeFilter.Apply(croppedImage);
+					frameSize = resizedImageAfterCrop.Size;
 					//update image
 					UpdateBitmapMethod(resizedImageAfterCrop, 255);
 
@@ -355,6 +378,7 @@ namespace VCamDeskApp
 				{
 					// resize image
 					Bitmap resizedImage = resizeFilter.Apply(localCacheBitmap);
+					frameSize = resizedImage.Size;
 					//update image
 					UpdateBitmapMethod(resizedImage, 255);
 					//free temp bitmap
@@ -362,7 +386,9 @@ namespace VCamDeskApp
 
 				}
 
-
+				//update form size
+				//this.Size = new Size(frameSize.Width + 10, frameSize.Height + 10);
+				
 
 			}
 			catch (System.ArgumentException e)
@@ -390,6 +416,7 @@ namespace VCamDeskApp
 
 			try
 			{
+				this.Size = bitmap.Size;
 				hBitmap = bitmap.GetHbitmap(Color.FromArgb(0));  // grab a GDI handle from this GDI+ bitmap
 				oldBitmap = Win32.SelectObject(memDc, hBitmap);
 
@@ -486,5 +513,44 @@ namespace VCamDeskApp
 			updateFilters();
 		}
 
+		protected override void WndProc(ref Message m)
+		{
+			if ( m.Msg == 0x214) 
+			{ // WM_SIZING
+			  // Keep the window square
+				RECT rc = (RECT)Marshal.PtrToStructure(m.LParam, typeof(RECT));
+				int w = rc.Right - rc.Left;
+				int h = rc.Bottom - rc.Top;
+				
+				//correct aspect ratio 
+				float sourceAspectRatio = (float)sourceFrameSize.Width / (float)sourceFrameSize.Height;
+				float rcAspectRatio = (float)w / (float)h;
+
+				if (sourceAspectRatio > rcAspectRatio)
+				{
+					h = (int)(w / sourceAspectRatio);
+				}
+				else if (sourceAspectRatio < rcAspectRatio)
+				{
+					w = (int)(h * sourceAspectRatio);
+				}
+
+				//int z = w > h ? w : h;
+				rc.Bottom = rc.Top + h;
+				rc.Right = rc.Left + w;
+				Marshal.StructureToPtr(rc, m.LParam, false);
+				m.Result = (IntPtr)1;
+				return;
+			}
+			base.WndProc(ref m);
+		}
+		[StructLayout(LayoutKind.Sequential)]
+		public struct RECT
+		{
+			public int Left;
+			public int Top;
+			public int Right;
+			public int Bottom;
+		}
 	}
 }

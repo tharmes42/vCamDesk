@@ -304,10 +304,11 @@ namespace VCamDeskApp
 
 			if (videoSource1.VideoCapabilities.Length > 0)
 			{
-				videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex]; //It selects the default size
-				resolutionLabel.Text = videoSource1.VideoCapabilities[resolutionIndex].FrameSize.ToString();
-				borderRect = new Rectangle(100, 100,(int)(frameSize.Width / 2), (int)(frameSize.Height / 2));
-				aspectRatio = (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Width / (float)videoSource1.VideoCapabilities[resolutionIndex].FrameSize.Height;
+				videoSource1.VideoResolution = videoSource1.VideoCapabilities[resolutionIndex]; //It selects the default size				
+				sourceFrameSize = videoSource1.VideoCapabilities[resolutionIndex].FrameSize;
+				resolutionLabel.Text = sourceFrameSize.ToString();
+				borderRect = new Rectangle(100, 100,(int)(sourceFrameSize.Width / 2), (int)(sourceFrameSize.Height / 2));
+				aspectRatio = (float)sourceFrameSize.Width / (float)sourceFrameSize.Height;
 				frameSize.Height = (int)(frameSize.Width / aspectRatio);
 
 			}
@@ -362,6 +363,7 @@ namespace VCamDeskApp
 		private VideoCaptureDevice videoSource1; // selected video source
 		private AlphaForm alphaForm;    // form to display videofeed with alpha transparency
 		private Size frameSize; // target size of frame
+		private Size sourceFrameSize; // source size of frame
 		private float aspectRatio; // aspectRation auf frame
 		private bool useTransparency; // use transparency yes/no
 		FilterInfoCollection videoDevices; // list of video devices
