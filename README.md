@@ -44,8 +44,15 @@ https://personifyinc.com/products/presenter
 It also provides a free placable chromacam on your desktop too with additional features.
 
 ### Just the webcam source example
-![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/vDeskCam_screen4_without_greenscreen.png "Just the webcam without greenscreen removal :)")
+![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/no-autocrop.jpg "Just the webcam without greenscreen removal :)")
 
+Using auto-crop it can remove unneeded background details:
+
+![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/autocrop1.jpg "Auto-detection of relevant areas by moving around")
+Auto-detection of relevant areas by moving around
+
+![alt text](https://github.com/tharmes42/vCamDesk/blob/master/pagecontent/autocrop2.jpg "cropped image with less details like the door in the background")
+cropped image with less details like the door in the background
 
 ## Building & dependencies
 Note: If you want to build this, make sure to get the nuget-packages referenced in this project:
