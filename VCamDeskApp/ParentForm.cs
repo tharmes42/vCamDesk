@@ -315,8 +315,6 @@ namespace VCamDeskApp
 			videoSourcePlayer1.VideoSource = videoSource1;
 			videoSourcePlayer1.Start();
 
-			//set Crop Settings on alphaForm
-			alphaForm.CropAuto = cropAutoCheckBox.Checked;
 			//update target size and activate crop
 			alphaForm.SetTargetFrameSizeAndCrop(frameSize);
 

@@ -160,11 +160,6 @@ namespace VCamDeskApp
 
 
 
-
-		public bool CropAuto { get; set; } = false;  //crop the image automatically
-
-
-
 		public VcdPerPixelAlphaForm()
 		{
 			InitializeComponent();
@@ -326,12 +321,13 @@ namespace VCamDeskApp
 		/// </summary>
 		public void CropMore()
 		{
-			int aspectRatio = (int)(frameSize.Width / frameSize.Height);
+			//TODO: broken
+			int aspectRatio = (int)(sourceFrameSize.Width / sourceFrameSize.Height);
 
-			if (cropRect.Y < ((int)((float)frameSize.Height / 3)))
+			if (cropRect.Y < ((int)((float)sourceFrameSize.Height / 3)))
 			{
-				cropRect.Y = cropRect.Y + (int)((float)frameSize.Height * 0.1);
-				cropRect.X = cropRect.X + (int)((float)frameSize.Width * 0.1);
+				cropRect.Y = cropRect.Y + (int)((float)sourceFrameSize.Height * 0.1);
+				cropRect.X = cropRect.X + (int)((float)sourceFrameSize.Width * 0.1);
 
 				updateFilters();
 			}
@@ -342,8 +338,9 @@ namespace VCamDeskApp
 		/// </summary>
 		public void CropLess()
 		{
-			cropRect.Y = cropRect.Y - (int)((float)frameSize.Height * 0.1);
-			cropRect.X = cropRect.X - (int)((float)frameSize.Width * 0.1);
+			//TODO: broken
+			cropRect.Y = cropRect.Y - (int)((float)sourceFrameSize.Height * 0.1);
+			cropRect.X = cropRect.X - (int)((float)sourceFrameSize.Width * 0.1);
 
 			//you can and should not negative crop :)
 			if (cropRect.Y < 0 || cropRect.X < 0)

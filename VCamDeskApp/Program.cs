@@ -40,7 +40,7 @@ namespace VCamDeskApp
 		{
 			InitializeComponent();
 
-			Bitmap startBmp = new Bitmap(300, 200);
+			Bitmap startBmp = new Bitmap(150, 100);
 			using (Graphics gfx = Graphics.FromImage(startBmp))
 			using (SolidBrush brush = new SolidBrush(Color.FromArgb(128, 0, 0, 0)))
 			{
