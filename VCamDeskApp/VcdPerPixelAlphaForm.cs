@@ -208,7 +208,10 @@ namespace VCamDeskApp
 
 		private ParentForm parentForm;
 
-		///<para>Frees our bitmap.</para>
+		/// <summary>
+		/// Frees our bitmap.
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected override void Dispose(bool disposing)
 		{
 			try
@@ -226,8 +229,10 @@ namespace VCamDeskApp
 		}
 
 
-
-		/// <para>Changes the local bitmap.</para>
+		/// <summary>
+		/// replaces the local bitmap (including dispose of old bitmap)
+		/// </summary>
+		/// <param name="bitmap"></param>
 		public void SetBitmap(Bitmap bitmap)
 		{
 			if (localCacheBitmap != null)
