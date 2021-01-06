@@ -8,8 +8,8 @@ It also supports chromakey (alphachannel), so webcam tools like Snap Camera, XSp
 which provide virtual background removal without greenscreen are supported and the
 result even takes lesser space on your screen / demo / recordings. :)
 
-## PROJECT NOT MAINTAINED 
-I have created the program new from scratch as an universal windows app to make is easier and safer to distribute the app. The new app lacks the greenscreen / alpha channel function, because this is not available with the current windwos SDK. But the most important things are working.
+## IMPORTANT: PROJECT NOT MAINTAINED -> Use new app WebcamOnDesktop
+I have created the program new from scratch as an universal windows app to make is easier and safer to distribute the app. The new app lacks the greenscreen / alpha channel function, because this is not available with the current windows SDK. But the most important things are working.
 
 Have a look at it: [WebcamOnDesktop](https://github.com/tharmes42/WebcamOnDesktop)
 
